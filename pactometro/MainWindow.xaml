@@ -1,0 +1,19 @@
+﻿<Window x:Class="pactometro.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:pactometro"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <WrapPanel x:Name="botones" Grid.Row="0" >
+            <Button x:Name="mostrar" Content="Mostrar todas" HorizontalAlignment="Left" VerticalAlignment="Center" Height="Auto" Width="Auto" Margin="5" Padding="5" Click="mostrarTodo_Click"/>
+        </WrapPanel>
+        <StackPanel x:Name="panel" HorizontalAlignment="Center" Orientation="Vertical" Grid.Row="1" Margin="5" Background="Yellow"/>
+    </Grid>
+</Window>
