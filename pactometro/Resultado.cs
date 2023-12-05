@@ -26,7 +26,7 @@ namespace pactometro
         public int Escaños
         {
             get { return escaños; }
-            set { partido = value.ToString(); OnPropertyChanged("Escaños"); }
+            set { escaños = value; OnPropertyChanged("Escaños"); }
         }
 
         public Resultado(string p, int e)

@@ -4,11 +4,11 @@
 winexe
 C#
 .cs
-C:\Users\andre\Documents\GitHub\practica_IGU\pactometro\obj\Debug\
+C:\Users\andre\Documents\GitHub\practica_IGU\pactometro\obj\Release\
 pactometro
 none
 false
-DEBUG;TRACE
+TRACE
 C:\Users\andre\Documents\GitHub\practica_IGU\pactometro\App.xaml
 1219584333
 
@@ -16,5 +16,5 @@ C:\Users\andre\Documents\GitHub\practica_IGU\pactometro\App.xaml
 13-1310406943
 MainWindow.xaml;
 
-False
+True
 

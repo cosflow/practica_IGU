@@ -11,9 +11,12 @@
             <RowDefinition Height="50"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <WrapPanel x:Name="botones" Grid.Row="0" >
-            <Button x:Name="mostrar" Content="Mostrar todas" HorizontalAlignment="Left" VerticalAlignment="Center" Height="Auto" Width="Auto" Margin="5" Padding="5" Click="mostrarTodo_Click"/>
-        </WrapPanel>
-        <StackPanel x:Name="panel" HorizontalAlignment="Center" Orientation="Vertical" Grid.Row="1" Margin="5" Background="Yellow"/>
+		<Menu Grid.Row ="0" Height ="20">
+			<MenuItem Header ="Hola" Click = "mostrarTodo_Click">
+
+			</MenuItem >	
+		</Menu>
+		<Canvas x:Name="lienzo" Grid.Row="1" Margin="10" Background="Red">
+		</Canvas>
     </Grid>
 </Window>

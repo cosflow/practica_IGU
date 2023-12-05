@@ -14,10 +14,11 @@ namespace pactometro
 
         public DatosElecciones()
         {
+            elecciones = new List<Eleccion>();
             generarDatosIniciales();
         }
 
-        public List<Eleccion> ObtenerElecciones()
+        public List<Eleccion> getElecciones()
         {
             return elecciones;
         }
