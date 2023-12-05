@@ -5,18 +5,19 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:pactometro"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
+        Title="MainWindow" Height="450" Width="800" Loaded="Window_Loaded" SizeChanged="Window_SizeChanged">
+    <Grid x:Name="Grid">
         <Grid.RowDefinitions>
-            <RowDefinition Height="50"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition />
         </Grid.RowDefinitions>
-		<Menu Grid.Row ="0" Height ="20">
-			<MenuItem Header ="Hola" Click = "mostrarTodo_Click">
+        <Menu Grid.Row ="0" Height ="20" VerticalAlignment="Top" Background="AntiqueWhite">
+            <MenuItem Header ="Opciones" Click ="MenuItem_Opciones_Click">
+                <MenuItem Header="Modo de visualización"/>
+                <MenuItem Header="Registro de elecciones"/>
+            </MenuItem >
+        </Menu>
+            <Canvas x:Name="lienzo" Grid.Row="1" Margin="30" Background="NavajoWhite"/>
 
-			</MenuItem >	
-		</Menu>
-		<Canvas x:Name="lienzo" Grid.Row="1" Margin="10" Background="Red">
-		</Canvas>
     </Grid>
 </Window>
