@@ -17,6 +17,6 @@
                 <MenuItem Header="Registro de elecciones"/>
             </MenuItem >
         </Menu>
-        <Canvas x:Name="lienzo" Grid.Row="1" Margin="30" Background="NavajoWhite"/>
+        <Canvas x:Name="lienzo" Grid.Row="1" Margin="30" Background="NavajoWhite" SizeChanged="Canvas_SizeChanged"/>
     </Grid>
 </Window>

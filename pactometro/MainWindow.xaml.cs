@@ -43,47 +43,105 @@ namespace pactometro
             {
                 int ancho = 10;
                 List<Resultado> resultados = e.Results;
+                double[] alturas = obtenerAlturasPorcentuales(resultados);
 
                 int tam = resultados.Count;
 
-                Point[] puntosX1 = new Point[tam];
-                Point[] puntosY1 = new Point[tam];
-
-                Point[] puntosX2 = new Point[tam];
-                Point[] puntosY2 = new Point[tam];
-
+                Point[] puntos = new Point[tam];
 
                 for (int i = 0; i < tam; i++)
                 {
-                    puntosX1[i].X = lienzo.ActualWidth * (i) / tam;
-                    puntosX1[i].Y = lienzo.ActualHeight;
-                    puntosY1[i].X = puntosX1[i].X;
-                    puntosY1[i].Y = (puntosX1[i].Y - resultados[i].Escaños);
-
-
-
-                    puntosX2[i].X = puntosX1[i].X + ancho;
-                    puntosX2[i].Y = puntosX1[i].Y;
-                    puntosY2[i].X = puntosY1[i].X + ancho;
-                    puntosY2[i].Y = puntosY1[i].Y;
+                    if (i == 0)
+                    {
+                        puntos[i].X = lienzo.ActualWidth / (tam* 2);
+                    }
+                    puntos[i].X = (lienzo.ActualWidth * i / tam) + puntos[0].X;
+                    puntos[i].Y = lienzo.ActualHeight-lienzo.Margin.Top;
 
                     TextBlock part = new TextBlock();
                     part.Text = resultados[i].Partido;
-
-                    Canvas.SetLeft(part, puntosX1[i].X);
-                    Canvas.SetTop(part, puntosX1[i].Y);
-
-                    Polyline p = new Polyline();
-                    p.Points.Add(puntosX1[i]); p.Points.Add(puntosX2[i]); p.Points.Add(puntosY2[i]); p.Points.Add(puntosY1[i]);
-                    SolidColorBrush pincel = new SolidColorBrush(getColor(resultados[i].Partido));
-                    p.Fill = pincel;
                     
-                    lienzo.Children.Add(p);
+                        
+                    Canvas.SetLeft(part, puntos[i].X);
+                    Canvas.SetTop(part, puntos[i].Y);
+                        
+                    Shape rect = new Rectangle();
+
+                    rect.Width = ancho;
+                    rect.Height = alturas[i];
+                    SolidColorBrush pincel = new SolidColorBrush(getColor(resultados[i].Partido));
+                    rect.Fill = pincel;
+
+                    ScaleTransform scaleTransform = new ScaleTransform(1, -1);
+                    rect.RenderTransform = scaleTransform;
+
+                    Canvas.SetLeft(part, puntos[i].X);
+                    Canvas.SetTop(part, puntos[i].Y);
+
+                    Canvas.SetLeft(rect, puntos[i].X);
+                    Canvas.SetTop(rect, puntos[i].Y);
+
+                    lienzo.Children.Add(rect);
                     lienzo.Children.Add(part);
                 }
             }
         }
 
+        private double[] obtenerAlturasPorcentuales(List<Resultado> resultados)
+        {
+            int tam = resultados.Count;
+            double[] alturas = new double[tam];
+            Point p1 = new Point();
+            p1.X = 0;
+            p1.Y = 0;
+            Point p2 = new Point();
+            p2.X = 0;
+            p2.Y = lienzo.ActualHeight;
+
+            //creamos dos rectángulos auxiliares
+            Rectangle aux1 = new Rectangle();
+            Rectangle aux2 = new Rectangle();
+
+            //los colocamos en el canvas con las coordenadas del Canvas
+            Canvas.SetLeft(aux1, p1.X);
+            Canvas.SetTop(aux1, p1.Y);
+            Canvas.SetLeft(aux2, p2.Y);
+            Canvas.SetTop(aux2, p2.Y);
+
+            lienzo.Children.Add(aux1);
+            lienzo.Children.Add(aux2);
+
+            Point paux = new Point();
+
+            //obtenemos las coordenadas absolutas en la ventana
+            paux = aux2.PointToScreen(p2);
+            double alturaCanvas = paux.Y;
+            paux = aux1.PointToScreen(p1);
+
+
+            lienzo.Children.Remove(aux1);
+            lienzo.Children.Remove(aux2);
+
+            //calculamos la altura en base a las coordenadas obtenidas
+            double alturaMax = alturaCanvas-paux.Y;
+            int totalEscaños = 0;
+
+            if (resultados != null)
+            {
+                foreach (Resultado r in resultados)
+                {
+                    totalEscaños += r.Escaños;
+                }
+
+                for (int i = 0; i < tam; i++)
+                {
+                    double porcentaje = resultados[i].Escaños * 100 / totalEscaños;
+                    alturas[i] = porcentaje * alturaMax/100;
+                }
+            }
+
+            return alturas;
+        }
         private Color getColor(String partido)
         {
             switch (partido)
@@ -112,17 +170,23 @@ namespace pactometro
 
         private void MenuItem_Opciones_Click(object sender, RoutedEventArgs e)
         {
-
             visualizarResultados(elecciones[0]);
         }
 
-        //private void Elemento_MouseEnter(object sender, MouseEventArgs e)
-        //{
-        //    // Se ejecuta cuando el ratón entra en el elemento
-        //    Point p = e.GetPosition(lienzo);
-        //    TextBox infoPart = new TextBox();
-        //    infoPart.Text = "";
-        //}
+        private void Rect_MouseEnter(object sender, MouseEventArgs e)
+        {
+            Rectangle rect = (Rectangle)sender;
+            Point p = e.GetPosition(lienzo);
+            TextBox infoPart = new TextBox();
+            infoPart.Text = ""+rect.ActualHeight;
+            Canvas.SetLeft(infoPart, p.X);
+            Canvas.SetTop(infoPart, p.Y);
+        }
+
+        private void Rect_MouseLeave(object sender, MouseEventArgs e)
+        {
+
+        }
 
         private void Canvas_SizeChanged(object sender, SizeChangedEventArgs e)
         {
