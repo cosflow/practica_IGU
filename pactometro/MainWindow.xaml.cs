@@ -38,7 +38,7 @@ namespace pactometro
 
         private void visualizarResultados(Eleccion e)
         {
-
+            
             if (e != null)
             {
                 int ancho = 10;
@@ -124,33 +124,33 @@ namespace pactometro
         //    infoPart.Text = "";
         //}
 
-        //private void Canvas_SizeChanged(object sender, SizeChangedEventArgs e)
-        //{
-        //    Canvas canvas = (Canvas)sender;
-        //    SizeChangedEventArgs canvas_Changed_Args = e;
+        private void Canvas_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            Canvas canvas = (Canvas)sender;
+            SizeChangedEventArgs canvas_Changed_Args = e;
 
-        //    if (canvas_Changed_Args.PreviousSize.Width == 0) return;
+            if (canvas_Changed_Args.PreviousSize.Width == 0) return;
 
-        //    double pre_altura = canvas_Changed_Args.PreviousSize.Height;
-        //    double pre_ancho = canvas_Changed_Args.PreviousSize.Width;
+            double pre_altura = canvas_Changed_Args.PreviousSize.Height;
+            double pre_ancho = canvas_Changed_Args.PreviousSize.Width;
 
-        //    double post_altura = canvas_Changed_Args.NewSize.Height;
-        //    double post_ancho = canvas_Changed_Args.NewSize.Width;
+            double post_altura = canvas_Changed_Args.NewSize.Height;
+            double post_ancho = canvas_Changed_Args.NewSize.Width;
 
-        //    double escalaAlt = post_altura / pre_altura;
-        //    double escalaAnch = post_ancho / pre_ancho;
+            double escalaAlt = post_altura / pre_altura;
+            double escalaAnch = post_ancho / pre_ancho;
 
-        //    foreach (FrameworkElement elemento in canvas.Children)
-        //    {
-        //        double preX = Canvas.GetLeft(elemento);
-        //        double preY = Canvas.GetLeft(elemento);
+            foreach (FrameworkElement elemento in canvas.Children)
+            {
+                double preX = Canvas.GetLeft(elemento);
+                double preY = Canvas.GetLeft(elemento);
 
-        //        Canvas.SetLeft(elemento, preX * escalaAnch);
-        //        Canvas.SetTop(elemento, preY * escalaAlt);
+                Canvas.SetLeft(elemento, preX * escalaAnch);
+                Canvas.SetTop(elemento, preY * escalaAlt);
 
-        //        elemento.Width = elemento.Width* escalaAnch;
-        //        elemento.Height = elemento.Height* escalaAlt;
-        //    }
-        //}
+                elemento.Width = elemento.Width * escalaAnch;
+                elemento.Height = elemento.Height * escalaAlt;
+            }
+        }
     }
 }
