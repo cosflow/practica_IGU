@@ -38,7 +38,7 @@ namespace pactometro
             resultado1.Add(new Resultado("CCA", 1));
             resultado1.Add(new Resultado("UPN", 1));
 
-            elecciones.Add(new Eleccion(resultado1, "CORTES GENERALES", "ELECCIONES GENERALES", "23/7/2023"));
+            elecciones.Add(new Eleccion(resultado1, "CORTES GENERALES", "Generales", "23/7/2023"));
 
 
             List<Resultado> resultado2 = new List<Resultado>();
@@ -58,7 +58,7 @@ namespace pactometro
             resultado2.Add(new Resultado("BNG", 1));
             resultado2.Add(new Resultado("OTROS", 4));
 
-            elecciones.Add(new Eleccion(resultado2, "CORTES GENERALES", "ELECCIONES GENERALES", "10/11/2019"));
+            elecciones.Add(new Eleccion(resultado2, "CORTES GENERALES", "Generales", "10/11/2019"));
 
             List<Resultado> resultado3 = new List<Resultado>();
 
@@ -72,7 +72,7 @@ namespace pactometro
             resultado3.Add(new Resultado("XAV", 1));
 
 
-            elecciones.Add(new Eleccion(resultado3, "PARLAMENTO DE CyL", "ELECCIONES AUTONÓMICAS", "14/2/2022"));
+            elecciones.Add(new Eleccion(resultado3, "Comunidad de CyL", "Autonómicas", "14/2/2022"));
 
             List<Resultado> resultado4 = new List<Resultado>();
 
@@ -84,7 +84,7 @@ namespace pactometro
             resultado4.Add(new Resultado("XAV", 1));
 
 
-            elecciones.Add(new Eleccion(resultado4, "PARLAMENTO DE CyL", "ELECCIONES AUTONÓMICAS", "14/2/2022"));
+            elecciones.Add(new Eleccion(resultado4, "Comunidad de CyL", "Autonómicas", "26/5/2019"));
 
         }
     }

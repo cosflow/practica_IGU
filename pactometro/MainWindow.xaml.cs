@@ -41,21 +41,45 @@ namespace pactometro
             
             if (e != null)
             {
-                int ancho = 10;
+                switch (e.Tipo)
+                {
+                    case "Generales":
+                        tituloEleccion.Text = e.Tipo + " " + e.Fecha;
+                        break;
+                    default:
+                        tituloEleccion.Text = e.Tipo+" " +e.Parlamento + " " + e.Fecha;
+                        break;
+                }
+                tituloEleccion.FontSize = 20;
                 List<Resultado> resultados = e.Results;
                 double[] alturas = obtenerAlturasPorcentuales(resultados);
 
                 int tam = resultados.Count;
+                double ancho = lienzo.ActualWidth /(tam* 3);
+                double inicio = lienzo.ActualWidth/tam;
 
                 Point[] puntos = new Point[tam];
 
+                double mayor = 0;
+                int indice = 0;
+                for (int j = 0; j < tam; j++)
+                {
+                    if (alturas[j] > mayor)
+                    {
+                        mayor = alturas[j];
+                        indice = j;
+                    }
+                }
+
                 for (int i = 0; i < tam; i++)
                 {
+
+
                     if (i == 0)
                     {
-                        puntos[i].X = lienzo.ActualWidth / (tam* 2);
+                        puntos[i].X = inicio;
                     }
-                    puntos[i].X = (lienzo.ActualWidth * i / tam) + puntos[0].X;
+                    puntos[i].X = (lienzo.ActualWidth * (i) /(tam+2)) + puntos[0].X;
                     puntos[i].Y = lienzo.ActualHeight-lienzo.Margin.Top;
 
                     TextBlock part = new TextBlock();
@@ -65,7 +89,7 @@ namespace pactometro
                     Canvas.SetLeft(part, puntos[i].X);
                     Canvas.SetTop(part, puntos[i].Y);
                         
-                    Shape rect = new Rectangle();
+                    Rectangle rect = new Rectangle();
 
                     rect.Width = ancho;
                     rect.Height = alturas[i];
@@ -76,14 +100,60 @@ namespace pactometro
                     rect.RenderTransform = scaleTransform;
 
                     Canvas.SetLeft(part, puntos[i].X);
-                    Canvas.SetTop(part, puntos[i].Y);
+                    Canvas.SetBottom(part, lienzo.ActualHeight);
 
                     Canvas.SetLeft(rect, puntos[i].X);
                     Canvas.SetTop(rect, puntos[i].Y);
 
                     lienzo.Children.Add(rect);
                     lienzo.Children.Add(part);
+
+                    if (i == indice)
+                    {
+                        generarEjes(resultados[i].Escaños,rect);
+                    }
                 }
+                
+            }
+        }
+
+        private void generarEjes(int maxResult,Rectangle rect)
+        {
+
+            double conversion = rect.Height/ (double) maxResult;
+
+            while(maxResult%20 != 0)
+            {
+                maxResult++;
+            }
+
+            int alturaMax = 1;
+
+            while(maxResult >= 0)
+            {
+                alturaMax =(int) (maxResult * conversion);
+                Rectangle marca = new Rectangle();
+                marca.Height = 1;
+                marca.Width = 10;
+                marca.StrokeThickness = 2;
+                marca.Fill = Brushes.Red;
+
+                Canvas.SetTop(marca, lienzo.ActualHeight-alturaMax-lienzo.Margin.Top);
+                Canvas.SetLeft(marca, 0);
+
+                lienzo.Children.Add(marca);
+
+                Label textAltura = new Label();
+
+                textAltura.Content = ""+maxResult;
+                textAltura.FontSize = 12;
+                textAltura.Foreground = Brushes.Red;
+                Canvas.SetLeft(textAltura, marca.Width);
+                Canvas.SetTop(textAltura, Canvas.GetTop(marca)-15);
+
+                lienzo.Children.Add(textAltura);
+                
+                maxResult = maxResult - 20;
             }
         }
 
@@ -91,55 +161,33 @@ namespace pactometro
         {
             int tam = resultados.Count;
             double[] alturas = new double[tam];
-            Point p1 = new Point();
-            p1.X = 0;
-            p1.Y = 0;
-            Point p2 = new Point();
-            p2.X = 0;
-            p2.Y = lienzo.ActualHeight;
 
-            //creamos dos rectángulos auxiliares
-            Rectangle aux1 = new Rectangle();
-            Rectangle aux2 = new Rectangle();
-
-            //los colocamos en el canvas con las coordenadas del Canvas
-            Canvas.SetLeft(aux1, p1.X);
-            Canvas.SetTop(aux1, p1.Y);
-            Canvas.SetLeft(aux2, p2.Y);
-            Canvas.SetTop(aux2, p2.Y);
-
-            lienzo.Children.Add(aux1);
-            lienzo.Children.Add(aux2);
-
-            Point paux = new Point();
-
-            //obtenemos las coordenadas absolutas en la ventana
-            paux = aux2.PointToScreen(p2);
-            double alturaCanvas = paux.Y;
-            paux = aux1.PointToScreen(p1);
-
-
-            lienzo.Children.Remove(aux1);
-            lienzo.Children.Remove(aux2);
+            Point p = new Point();
+            p.X = 0;
+            p.Y = 0;
+            double inicioCanvas = 0;
+            p = lienzo.PointToScreen(p);
+            inicioCanvas = p.Y;
 
             //calculamos la altura en base a las coordenadas obtenidas
-            double alturaMax = alturaCanvas-paux.Y;
-            int totalEscaños = 0;
+            double alturaMax = (lienzo.ActualHeight - lienzo.Margin.Top)*.9;
 
             if (resultados != null)
             {
-                foreach (Resultado r in resultados)
+                double mayor = 0;
+                for (int j = 0; j < tam; j++ )
                 {
-                    totalEscaños += r.Escaños;
+                    if (resultados[j].Escaños > mayor)
+                    {
+                        mayor = resultados[j].Escaños;
+                    }
                 }
 
                 for (int i = 0; i < tam; i++)
                 {
-                    double porcentaje = resultados[i].Escaños * 100 / totalEscaños;
-                    alturas[i] = porcentaje * alturaMax/100;
+                    alturas[i] = resultados[i].Escaños * alturaMax / mayor;
                 }
             }
-
             return alturas;
         }
         private Color getColor(String partido)
@@ -156,6 +204,8 @@ namespace pactometro
                 case "EH_BILDU": return Colors.Cyan;
                 case "EAJ_PNV": return Colors.DarkGreen;
                 case "CS": return Colors.Orange;
+                case "UPN": return Colors.LightGray;
+                case "BNG": return Colors.Magenta;
                 case "CCA": return Colors.Gold;
                 case "OTROS": return Colors.Black;
                 default:
@@ -181,6 +231,7 @@ namespace pactometro
             infoPart.Text = ""+rect.ActualHeight;
             Canvas.SetLeft(infoPart, p.X);
             Canvas.SetTop(infoPart, p.Y);
+            lienzo.Children.Add(infoPart);
         }
 
         private void Rect_MouseLeave(object sender, MouseEventArgs e)
@@ -192,28 +243,30 @@ namespace pactometro
         {
             Canvas canvas = (Canvas)sender;
             SizeChangedEventArgs canvas_Changed_Args = e;
-
-            if (canvas_Changed_Args.PreviousSize.Width == 0) return;
-
-            double pre_altura = canvas_Changed_Args.PreviousSize.Height;
-            double pre_ancho = canvas_Changed_Args.PreviousSize.Width;
-
-            double post_altura = canvas_Changed_Args.NewSize.Height;
-            double post_ancho = canvas_Changed_Args.NewSize.Width;
-
-            double escalaAlt = post_altura / pre_altura;
-            double escalaAnch = post_ancho / pre_ancho;
-
-            foreach (FrameworkElement elemento in canvas.Children)
+            if (canvas == null || canvas.ActualHeight == 0 || canvas.ActualWidth ==0)
             {
-                double preX = Canvas.GetLeft(elemento);
-                double preY = Canvas.GetLeft(elemento);
+                foreach(UIElement element in canvas.Children)
+                {
+                    canvas.Children.Remove(element);
+                }
+                return;
+            }
+            if (canvas.Children != null) 
+            {
+                foreach (UIElement el in canvas.Children)
+                {
+                    double proporcionX = Canvas.GetLeft(el) / e.PreviousSize.Width;
+                    double proporcionY = Canvas.GetTop(el) / e.PreviousSize.Height;
 
-                Canvas.SetLeft(elemento, preX * escalaAnch);
-                Canvas.SetTop(elemento, preY * escalaAlt);
+                    Canvas.SetLeft(el, proporcionX * canvas.ActualWidth);
+                    Canvas.SetTop(el, proporcionY * canvas.ActualHeight);
 
-                elemento.Width = elemento.Width * escalaAnch;
-                elemento.Height = elemento.Height * escalaAlt;
+                    //if (el is FrameworkElement frEl)
+                    //{
+                    //    frEl.Width = proporcionX * frEl.ActualWidth;
+                    //    frEl.Height = proporcionY * frEl.ActualHeight;
+                    //}
+                }
             }
         }
     }
