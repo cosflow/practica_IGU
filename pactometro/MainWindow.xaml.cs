@@ -266,12 +266,12 @@ namespace pactometro
             if (cdTablas == null)
             {
                 cdTablas = new CDTablas();
-                cdTablas.Closed += cdsec_Closed;
+                cdTablas.Closed += cdTablas_Closed;
                 cdTablas.CambioSeleccion += Cdsec_CambioSeleccion;
             }
             cdTablas.Show();
         }
-        void cdsec_Closed(object sender, EventArgs e)
+        void cdTablas_Closed(object sender, EventArgs e)
         {
             cdTablas = null; 
         }
@@ -297,6 +297,7 @@ namespace pactometro
                 }
                 List<Resultado> resultados = new List<Resultado>();
                 string parlamento = eleccionSeleccionada.Parlamento;
+                int maxNumpartido = 1;
                 for (int i = 0;i<parts.Length;i++)
                 {
                     foreach(Eleccion el in elecciones)
@@ -305,10 +306,13 @@ namespace pactometro
                         {
                             foreach(Resultado resultado in el.Results)
                             {
+                                int numVeces = 0;
                                 if(resultado.Partido == parts[i] )
                                 {
+                                    numVeces++;
                                     resultados.Add(resultado);
                                 }
+                                if(numVeces > maxNumpartido) maxNumpartido = numVeces;
                             }
                         }
                     }
@@ -316,7 +320,7 @@ namespace pactometro
                 Eleccion nuevaEleccion = new Eleccion(resultados, eleccionSeleccionada.Parlamento, eleccionSeleccionada.Tipo, eleccionSeleccionada.Fecha);
                 lienzo.Children.Clear();
                 visualizarResultados(nuevaEleccion);
-                mostrarLeyenda();
+                mostrarLeyenda(maxNumpartido);
             }
             else
             {
@@ -324,7 +328,7 @@ namespace pactometro
             }
         }
 
-        private void mostrarLeyenda()
+        private void mostrarLeyenda(int numRects)
         {
             Rectangle fondo = new Rectangle();
             fondo.Height = (lienzo.ActualHeight - lienzo.Margin.Top)/4;
@@ -335,6 +339,22 @@ namespace pactometro
             Canvas.SetRight(fondo, 0);
 
             lienzo.Children.Add(fondo);
+
+            for(int i = 0; i < numRects; i++)
+            {
+                Color c = new Color();
+                c = Colors.DarkTurquoise;
+                c.A = (byte)(c.A - i*255*2/numRects);
+                Rectangle r = new Rectangle();
+                r.Height = fondo.Height / 5;
+                r.Width = fondo.Width *3/ 5;
+                SolidColorBrush pincel = new SolidColorBrush(c);
+                r.Fill = pincel;
+                Canvas.SetRight(r, lienzo.ActualWidth+fondo.Width / 5);
+                Canvas.SetTop(r, (1+i)*fondo.Height / 5);
+                lienzo.Children.Add(r);
+            }
+
         }
 
         private void Normal_MenuItem_Click(object sender, EventArgs e)
