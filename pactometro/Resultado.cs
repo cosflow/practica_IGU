@@ -8,13 +8,13 @@ using System.ComponentModel;
 
 namespace pactometro
 {
-    internal class Resultado
+    public class Resultado
     {
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        string partido;
-        int escaños;
+        public string partido;
+        public int escaños;
         
 
         public string Partido

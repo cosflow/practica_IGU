@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace pactometro
 {
-    internal class Eleccion
+    public class Eleccion
     {
 
         public PropertyChangedEventHandler PropertyChanged;
@@ -18,7 +18,11 @@ namespace pactometro
         string parlamento;
         string tipo;
         string fecha;
-
+        int totalEscaños;
+        int mayoría;
+        string titulo;
+        string partidos;
+        string escaños;
         public List<Resultado> Results
         {
             get { return results; }
@@ -40,12 +44,56 @@ namespace pactometro
             get { return tipo; }
             set { tipo = value; }
         }
+        public int TotalEscaños
+        {
+            get { return totalEscaños; }
+        }
+
+        public int Mayoría
+        {
+            get { return mayoría; }
+        }
+
+        public string Título
+        {
+            get { return titulo; }
+        }
+
+        public string Partidos
+        {
+            get { return partidos; }
+        }
+
+        public string Escaños
+        {
+            get { return escaños; }
+        }
+
         public Eleccion(List<Resultado> results, string parlamento, string tipo, string fecha)
         {
             Results = results;
             Parlamento = parlamento;
             Tipo = tipo;
             Fecha = fecha;
+            foreach(Resultado resultado in results)
+            {
+                totalEscaños += resultado.Escaños;
+                partidos += resultado.Partido + '\n';
+                escaños += resultado.Escaños + '\n';
+            }
+            
+            double aprox;
+            if(totalEscaños%2 == 0)
+            {
+                mayoría = (totalEscaños / 2)+1;
+            }
+            else
+            {
+                aprox = (double)(totalEscaños / 2.0);
+                mayoría =(int)(aprox+0.5);
+            }
+            if (tipo == "Generales")  titulo = "Elecciones " + tipo + " " + fecha + " "; 
+            else titulo = "Elecciones "+ tipo + " " +parlamento + " " + fecha;
         }
 
         void OnPropertyChanged(string propertyName)

@@ -13,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace pactometro
 {
@@ -21,13 +22,12 @@ namespace pactometro
     /// </summary>
     public partial class MainWindow : Window
     {
-        DatosElecciones datos;
-        List<Eleccion> elecciones = new List<Eleccion>();
+        Secundaria cdsec = null;
+        Eleccion eleccionSeleccionada = null;
+
         public MainWindow()
         {
             InitializeComponent();
-            datos = new DatosElecciones();
-            elecciones = datos.getElecciones();
         }
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
@@ -119,13 +119,32 @@ namespace pactometro
 
         private void generarEjes(int maxResult,Rectangle rect)
         {
-
-            double conversion = rect.Height/ (double) maxResult;
-
-            while(maxResult%20 != 0)
+            int division;
+            if (maxResult > 100)
             {
-                maxResult++;
+                while (maxResult % 20 != 0)
+                {
+                    maxResult++;
+                }
+                division = 20;
             }
+            else if (maxResult > 50)
+            {
+                while (maxResult % 10 != 0)
+                {
+                    maxResult++;
+                }
+                division = 10;
+            }
+            else
+            {
+                while (maxResult % 5 != 0)
+                {
+                    maxResult++;
+                }
+                division = 5;
+            }
+            double conversion = rect.Height/ (double) maxResult;
 
             int alturaMax = 1;
 
@@ -152,8 +171,8 @@ namespace pactometro
                 Canvas.SetTop(textAltura, Canvas.GetTop(marca)-15);
 
                 lienzo.Children.Add(textAltura);
-                
-                maxResult = maxResult - 20;
+
+                maxResult -= division;
             }
         }
 
@@ -217,28 +236,6 @@ namespace pactometro
             }
             
         }
-
-        private void MenuItem_Opciones_Click(object sender, RoutedEventArgs e)
-        {
-            visualizarResultados(elecciones[0]);
-        }
-
-        private void Rect_MouseEnter(object sender, MouseEventArgs e)
-        {
-            Rectangle rect = (Rectangle)sender;
-            Point p = e.GetPosition(lienzo);
-            TextBox infoPart = new TextBox();
-            infoPart.Text = ""+rect.ActualHeight;
-            Canvas.SetLeft(infoPart, p.X);
-            Canvas.SetTop(infoPart, p.Y);
-            lienzo.Children.Add(infoPart);
-        }
-
-        private void Rect_MouseLeave(object sender, MouseEventArgs e)
-        {
-
-        }
-
         private void Canvas_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             Canvas canvas = (Canvas)sender;
@@ -268,6 +265,28 @@ namespace pactometro
                     //}
                 }
             }
+        }
+        private void Conf_MenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            if (cdsec == null)
+            {
+                cdsec = new Secundaria();
+                cdsec.Closed += cdsec_Closed;
+                cdsec.CambioSeleccion += Cdsec_CambioSeleccion;
+            }
+            cdsec.Show();
+        }
+        void cdsec_Closed(object sender, EventArgs e)
+        {
+            cdsec = null; 
+        }
+
+        private void Cdsec_CambioSeleccion(object sender, CambioSeleccionEventArgs e)
+        {
+            lienzo.Children.Clear();
+            eleccionSeleccionada = e.eleccionSeleccionada;
+            visualizarResultados(eleccionSeleccionada);
+
         }
     }
 }
