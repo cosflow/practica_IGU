@@ -24,13 +24,13 @@ namespace pactometro
             eleccionSeleccionada = e;
         }
     }
-    public partial class Secundaria : Window
+    public partial class CDTablas : Window
     {
         DatosElecciones datos;
         public event EventHandler<CambioSeleccionEventArgs> CambioSeleccion;
         List<Eleccion> listaElecciones;
         List<Resultado> listaResultados;
-        public Secundaria()
+        public CDTablas()
         {
             InitializeComponent();
             listaElecciones = new List<Eleccion>();

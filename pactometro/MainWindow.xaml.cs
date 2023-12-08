@@ -22,12 +22,15 @@ namespace pactometro
     /// </summary>
     public partial class MainWindow : Window
     {
-        Secundaria cdsec = null;
+        CDTablas cdTablas = null;
         Eleccion eleccionSeleccionada = null;
+        List<Eleccion> elecciones;
 
         public MainWindow()
         {
             InitializeComponent();
+            elecciones = new List<Eleccion>();
+            DatosElecciones datos = new DatosElecciones(elecciones);
         }
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
@@ -181,14 +184,6 @@ namespace pactometro
             int tam = resultados.Count;
             double[] alturas = new double[tam];
 
-            Point p = new Point();
-            p.X = 0;
-            p.Y = 0;
-            double inicioCanvas = 0;
-            p = lienzo.PointToScreen(p);
-            inicioCanvas = p.Y;
-
-            //calculamos la altura en base a las coordenadas obtenidas
             double alturaMax = (lienzo.ActualHeight - lienzo.Margin.Top)*.9;
 
             if (resultados != null)
@@ -268,17 +263,17 @@ namespace pactometro
         }
         private void Conf_MenuItem_Click(object sender, RoutedEventArgs e)
         {
-            if (cdsec == null)
+            if (cdTablas == null)
             {
-                cdsec = new Secundaria();
-                cdsec.Closed += cdsec_Closed;
-                cdsec.CambioSeleccion += Cdsec_CambioSeleccion;
+                cdTablas = new CDTablas();
+                cdTablas.Closed += cdsec_Closed;
+                cdTablas.CambioSeleccion += Cdsec_CambioSeleccion;
             }
-            cdsec.Show();
+            cdTablas.Show();
         }
         void cdsec_Closed(object sender, EventArgs e)
         {
-            cdsec = null; 
+            cdTablas = null; 
         }
 
         private void Cdsec_CambioSeleccion(object sender, CambioSeleccionEventArgs e)
@@ -287,6 +282,69 @@ namespace pactometro
             eleccionSeleccionada = e.eleccionSeleccionada;
             visualizarResultados(eleccionSeleccionada);
 
+        }
+
+        private void Historico_MenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            if (eleccionSeleccionada != null)
+            {
+                MessageBox.Show("Cargados los datos históricos sobre las elecciones " 
+                    + eleccionSeleccionada.Tipo + " del día " + eleccionSeleccionada.Fecha + " en " + eleccionSeleccionada.Parlamento);
+                string[] parts = new string[eleccionSeleccionada.Results.Count];
+                for (int i = 0; i<eleccionSeleccionada.Results.Count; i++)
+                {
+                    parts[i] = eleccionSeleccionada.Results[i].Partido;
+                }
+                List<Resultado> resultados = new List<Resultado>();
+                string parlamento = eleccionSeleccionada.Parlamento;
+                for (int i = 0;i<parts.Length;i++)
+                {
+                    foreach(Eleccion el in elecciones)
+                    {
+                        if(parlamento.Equals(el.Parlamento))
+                        {
+                            foreach(Resultado resultado in el.Results)
+                            {
+                                if(resultado.Partido == parts[i] )
+                                {
+                                    resultados.Add(resultado);
+                                }
+                            }
+                        }
+                    }
+                }
+                Eleccion nuevaEleccion = new Eleccion(resultados, eleccionSeleccionada.Parlamento, eleccionSeleccionada.Tipo, eleccionSeleccionada.Fecha);
+                lienzo.Children.Clear();
+                visualizarResultados(nuevaEleccion);
+                mostrarLeyenda();
+            }
+            else
+            {
+                MessageBox.Show("ERROR\nSeleccione una elección en la ventana de Configuración, por favor");
+            }
+        }
+
+        private void mostrarLeyenda()
+        {
+            Rectangle fondo = new Rectangle();
+            fondo.Height = (lienzo.ActualHeight - lienzo.Margin.Top)/4;
+            fondo.Width = (lienzo.ActualWidth - lienzo.Margin.Right) / 4;
+            fondo.Fill = Brushes.LightGray;
+
+            Canvas.SetTop(fondo, 0);
+            Canvas.SetRight(fondo, 0);
+
+            lienzo.Children.Add(fondo);
+        }
+
+        private void Normal_MenuItem_Click(object sender, EventArgs e)
+        {
+            if (eleccionSeleccionada != null)
+            {
+                lienzo.Children.Clear();
+                visualizarResultados(eleccionSeleccionada);
+            }
+            else MessageBox.Show("ERROR\nSeleccione una elección en la ventana de Configuración, por favor");
         }
     }
 }

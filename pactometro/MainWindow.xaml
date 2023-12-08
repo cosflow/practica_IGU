@@ -14,7 +14,11 @@
         </Grid.RowDefinitions>
         <Menu Grid.Row ="0" Height ="20" VerticalAlignment="Top" Background="AntiqueWhite">
             <MenuItem Header ="Opciones">
-                <MenuItem Header="Modo de visualización"/>
+                <MenuItem Header="Modo de visualización">
+                    <MenuItem Header="Normal" Click="Normal_MenuItem_Click"/>
+                    <MenuItem Header="Histórico" Click="Historico_MenuItem_Click"/>
+                    <MenuItem Header="Pactómetro"/>
+                </MenuItem>
                 <MenuItem Header="Registro de elecciones" Click="Conf_MenuItem_Click"/>
             </MenuItem >
         </Menu>

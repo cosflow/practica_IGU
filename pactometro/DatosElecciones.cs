@@ -11,10 +11,6 @@ namespace pactometro
     {
         
         List<Eleccion> datoselecciones;
-        public List<Eleccion> getElecciones()
-        {
-            return datoselecciones;
-        }
 
         public DatosElecciones(List<Eleccion> elecciones)
         {
