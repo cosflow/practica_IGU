@@ -25,18 +25,13 @@ namespace pactometro
         CDTablas cdTablas = null;
         Eleccion eleccionSeleccionada = null;
         List<Eleccion> elecciones;
+        int modo;
 
         public MainWindow()
         {
             InitializeComponent();
             elecciones = new List<Eleccion>();
             DatosElecciones datos = new DatosElecciones(elecciones);
-        }
-        private void Window_Loaded(object sender, RoutedEventArgs e)
-        {
-        }
-        private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
         }
 
         private void visualizarResultados(Eleccion e)
@@ -58,8 +53,8 @@ namespace pactometro
                 double[] alturas = obtenerAlturasPorcentuales(resultados);
 
                 int tam = resultados.Count;
-                double ancho = lienzo.ActualWidth /(tam* 3);
-                double inicio = lienzo.ActualWidth/tam;
+                double inicio = lienzo.ActualWidth/10;
+                double ancho = (lienzo.ActualWidth -inicio)/(tam* 3);
 
                 Point[] puntos = new Point[tam];
 
@@ -74,43 +69,71 @@ namespace pactometro
                     }
                 }
 
+                List<String> repetidos = new List<String>();
+                List<String> fechasRep = new List<String>();
                 for (int i = 0; i < tam; i++)
                 {
-
-
                     if (i == 0)
                     {
                         puntos[i].X = inicio;
                     }
-                    puntos[i].X = (lienzo.ActualWidth * (i) /(tam+2)) + puntos[0].X;
+
+                    puntos[i].X = ((lienzo.ActualWidth-inicio) * (i) /(tam+2)) + puntos[0].X;
                     puntos[i].Y = lienzo.ActualHeight-lienzo.Margin.Top;
 
                     TextBlock part = new TextBlock();
-                    part.Text = resultados[i].Partido;
-                    
-                        
-                    Canvas.SetLeft(part, puntos[i].X);
-                    Canvas.SetTop(part, puntos[i].Y);
-                        
                     Rectangle rect = new Rectangle();
-
                     rect.Width = ancho;
                     rect.Height = alturas[i];
-                    SolidColorBrush pincel = new SolidColorBrush(getColor(resultados[i].Partido));
-                    rect.Fill = pincel;
-
                     ScaleTransform scaleTransform = new ScaleTransform(1, -1);
-                    rect.RenderTransform = scaleTransform;
+                    int numReps = 0;
 
-                    Canvas.SetLeft(part, puntos[i].X);
-                    Canvas.SetBottom(part, lienzo.ActualHeight);
+                    rect.RenderTransform = scaleTransform;
+                    if (repetidos.Count == 0)
+                    {
+                        part.Text = resultados[i].Partido;
+                        Canvas.SetLeft(part, puntos[i].X);
+                        Canvas.SetTop(part, puntos[i].Y);
+                        lienzo.Children.Add(part);
+                        repetidos.Add(resultados[i].Partido);
+                    }
+                    else
+                    {
+                        if (!repetidos.Contains(resultados[i].partido))
+                        {
+                            numReps = 0;
+                            part.Text = resultados[i].Partido;
+                            Canvas.SetLeft(part, puntos[i].X);
+                            Canvas.SetTop(part, puntos[i].Y);
+                            lienzo.Children.Add(part);
+                            repetidos.Add(resultados[i].Partido);
+                        }
+                        else
+                        {
+                            numReps++;
+                            puntos[i].X = puntos[i-1].X +3*rect.Width/2;
+                        }
+                    }
 
                     Canvas.SetLeft(rect, puntos[i].X);
                     Canvas.SetTop(rect, puntos[i].Y);
 
-                    lienzo.Children.Add(rect);
-                    lienzo.Children.Add(part);
+                    if (numReps == 0)
+                    {
 
+                        SolidColorBrush pincel = new SolidColorBrush(getColor(resultados[i].Partido));
+                        rect.Fill = pincel;
+                    }
+                    else {
+
+                        Color c = getColor(resultados[i].Partido);
+                        c.A = (byte)(255 - 2*255/elecciones.Count*numReps);
+                        SolidColorBrush pincelArgb = new SolidColorBrush(c);
+                        rect.Fill = pincelArgb;
+                    }
+                    
+                    lienzo.Children.Add(rect);
+                    
                     if (i == indice)
                     {
                         generarEjes(resultados[i].Escaños,rect);
@@ -222,6 +245,9 @@ namespace pactometro
                 case "BNG": return Colors.Magenta;
                 case "CCA": return Colors.Gold;
                 case "OTROS": return Colors.Black;
+                case "UPL": return Colors.Cornsilk;
+                case "XAV": return Colors.Crimson;
+                case "SY": return Colors.Azure;
                 default:
                     byte[] rgb = new byte[3];
                     Random random = new Random();
@@ -231,33 +257,19 @@ namespace pactometro
             }
             
         }
-        private void Canvas_SizeChanged(object sender, SizeChangedEventArgs e)
+
+        private void lienzo_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            Canvas canvas = (Canvas)sender;
-            SizeChangedEventArgs canvas_Changed_Args = e;
-            if (canvas == null || canvas.ActualHeight == 0 || canvas.ActualWidth ==0)
+            if (eleccionSeleccionada != null)
             {
-                foreach(UIElement element in canvas.Children)
+                lienzo.Children.Clear();
+                if(modo == 0)
                 {
-                    canvas.Children.Remove(element);
+                    visualizarResultados(eleccionSeleccionada);
                 }
-                return;
-            }
-            if (canvas.Children != null) 
-            {
-                foreach (UIElement el in canvas.Children)
+                if(modo == 1)
                 {
-                    double proporcionX = Canvas.GetLeft(el) / e.PreviousSize.Width;
-                    double proporcionY = Canvas.GetTop(el) / e.PreviousSize.Height;
-
-                    Canvas.SetLeft(el, proporcionX * canvas.ActualWidth);
-                    Canvas.SetTop(el, proporcionY * canvas.ActualHeight);
-
-                    //if (el is FrameworkElement frEl)
-                    //{
-                    //    frEl.Width = proporcionX * frEl.ActualWidth;
-                    //    frEl.Height = proporcionY * frEl.ActualHeight;
-                    //}
+                    obtenerHistorico(eleccionSeleccionada);
                 }
             }
         }
@@ -280,7 +292,8 @@ namespace pactometro
         {
             lienzo.Children.Clear();
             eleccionSeleccionada = e.eleccionSeleccionada;
-            visualizarResultados(eleccionSeleccionada);
+            if(modo == 0) visualizarResultados(eleccionSeleccionada);
+            if (modo == 1) obtenerHistorico(eleccionSeleccionada);
 
         }
 
@@ -288,73 +301,118 @@ namespace pactometro
         {
             if (eleccionSeleccionada != null)
             {
-                MessageBox.Show("Cargados los datos históricos sobre las elecciones " 
-                    + eleccionSeleccionada.Tipo + " del día " + eleccionSeleccionada.Fecha + " en " + eleccionSeleccionada.Parlamento);
-                string[] parts = new string[eleccionSeleccionada.Results.Count];
-                for (int i = 0; i<eleccionSeleccionada.Results.Count; i++)
+                obtenerHistorico(eleccionSeleccionada);
+            }
+            else
+            {
+                MessageBox.Show("ERROR\nSeleccione una elección en la ventana de Opciones->Registro, por favor");
+            }
+        }
+
+        private void obtenerHistorico(Eleccion eleccion)
+        {
+            if(eleccion == null)
+            {
+                MessageBox.Show("ERROR\nSeleccione una elección en la ventana de  Opciones->Registro, por favor");
+                return;
+            }
+
+            //MessageBox.Show("Cargados los datos históricos sobre las elecciones " 
+            //    + eleccionSeleccionada.Tipo + " del día " + eleccionSeleccionada.Fecha + " en " + eleccionSeleccionada.Parlamento);
+
+            modo = 1;
+            lienzo.Children.Clear();
+
+            string[] parts = new string[eleccion.Results.Count];
+            for (int i = 0; i < eleccion.Results.Count; i++)
+            {
+                parts[i] = eleccion.Results[i].Partido;
+            }
+
+            List<Resultado> resultados = new List<Resultado>();
+            List<String> fechasRep = new List<string>();
+            string[] partes = eleccion.Fecha.Split('/');
+
+            foreach (Eleccion e in elecciones)
+            {
+                if (e.Parlamento.Equals(eleccion.Parlamento))
                 {
-                    parts[i] = eleccionSeleccionada.Results[i].Partido;
-                }
-                List<Resultado> resultados = new List<Resultado>();
-                string parlamento = eleccionSeleccionada.Parlamento;
-                int maxNumpartido = 1;
-                for (int i = 0;i<parts.Length;i++)
-                {
-                    foreach(Eleccion el in elecciones)
+                    string[] partes2 = e.Fecha.Split('/');
+                    if (int.Parse(partes2[2]) < int.Parse(partes[2]))
                     {
-                        if(parlamento.Equals(el.Parlamento))
+                        fechasRep.Add(e.Fecha);
+                    }
+                    if (int.Parse(partes2[2]) == int.Parse(partes[2]))
+                    {
+                        if (int.Parse(partes2[1]) < int.Parse(partes[1]))
                         {
-                            foreach(Resultado resultado in el.Results)
+                            fechasRep.Add(e.Fecha);
+                        }
+                        if (int.Parse(partes2[1]) == int.Parse(partes[1]))
                             {
-                                int numVeces = 0;
-                                if(resultado.Partido == parts[i] )
-                                {
-                                    numVeces++;
-                                    resultados.Add(resultado);
-                                }
-                                if(numVeces > maxNumpartido) maxNumpartido = numVeces;
+                            if (int.Parse(partes2[0]) <= int.Parse(partes[0]))
+                            {
+                                fechasRep.Add(e.Fecha);
                             }
                         }
                     }
                 }
-                Eleccion nuevaEleccion = new Eleccion(resultados, eleccionSeleccionada.Parlamento, eleccionSeleccionada.Tipo, eleccionSeleccionada.Fecha);
-                lienzo.Children.Clear();
-                visualizarResultados(nuevaEleccion);
-                mostrarLeyenda(maxNumpartido);
             }
-            else
-            {
-                MessageBox.Show("ERROR\nSeleccione una elección en la ventana de Configuración, por favor");
-            }
-        }
 
-        private void mostrarLeyenda(int numRects)
+            for (int i = 0; i < parts.Length; i++)
+            {
+                foreach (Eleccion el in elecciones)
+                {
+                    if (fechasRep.Contains(el.Fecha))
+                    {
+                        foreach (Resultado resultado in el.Results)
+                        {
+                            if (resultado.Partido == parts[i]) resultados.Add(resultado);
+                        }
+                    }
+                }
+            }
+
+            Eleccion nuevaEleccion = new Eleccion(resultados, eleccion.Parlamento, eleccion.Tipo, eleccion.Fecha);
+            visualizarResultados(nuevaEleccion);
+            mostrarLeyenda(fechasRep);
+        }
+        private void mostrarLeyenda(List<String> fechas)
         {
             Rectangle fondo = new Rectangle();
-            fondo.Height = (lienzo.ActualHeight - lienzo.Margin.Top)/4;
-            fondo.Width = (lienzo.ActualWidth - lienzo.Margin.Right) / 4;
-            fondo.Fill = Brushes.LightGray;
+            fondo.Height = 50;
+            fondo.Width = 100;
+            fondo.Fill = Brushes.Ivory;
 
             Canvas.SetTop(fondo, 0);
             Canvas.SetRight(fondo, 0);
 
             lienzo.Children.Add(fondo);
 
-            for(int i = 0; i < numRects; i++)
+            for(int i = 0; i < fechas.Count; i++)
             {
                 Color c = new Color();
-                c = Colors.DarkTurquoise;
-                c.A = (byte)(c.A - i*255*2/numRects);
+                c = Color.FromArgb((byte)(255 / (i+1)), 128, 128, 128);
+
                 Rectangle r = new Rectangle();
-                r.Height = fondo.Height / 5;
-                r.Width = fondo.Width *3/ 5;
+                r.Height = fondo.Height / 7;
+                r.Width = fondo.Width *2/ 6;
                 SolidColorBrush pincel = new SolidColorBrush(c);
                 r.Fill = pincel;
-                Canvas.SetRight(r, lienzo.ActualWidth+fondo.Width / 5);
-                Canvas.SetTop(r, (1+i)*fondo.Height / 5);
-                lienzo.Children.Add(r);
-            }
 
+                Label fecha = new Label();
+                fecha.Content = fechas[i];
+                fecha.FontSize = 8;
+
+                Canvas.SetRight(r,7*fondo.Width/12);
+                Canvas.SetTop(r, 50/(2-i)-r.Height-5);
+
+                Canvas.SetRight(fecha,fondo.Width / 12);
+                Canvas.SetTop(fecha, Canvas.GetTop(r)-5);
+
+                lienzo.Children.Add(r);
+                lienzo.Children.Add(fecha);
+            }
         }
 
         private void Normal_MenuItem_Click(object sender, EventArgs e)
@@ -363,8 +421,69 @@ namespace pactometro
             {
                 lienzo.Children.Clear();
                 visualizarResultados(eleccionSeleccionada);
+                modo = 0;
             }
-            else MessageBox.Show("ERROR\nSeleccione una elección en la ventana de Configuración, por favor");
+            else MessageBox.Show("ERROR\nSeleccione una elección en la ventana de  Opciones->Registro, por favor");
         }
+
+        private void Pactómetro_MenuItem_Click(object sender, EventArgs e) 
+        {
+            if(eleccionSeleccionada == null)
+            {
+                return;
+            }
+            List<Resultado> resultados = new List<Resultado>();
+            double[] alturas = obtenerAlturasPorcentuales(resultados);
+            foreach(Resultado resultado in resultados)
+            {
+                if (resultado.Escaños >= eleccionSeleccionada.Mayoría)
+                {
+
+                }
+            }
+        }
+
+
+        //private void Canvas_SizeChanged(object sender, SizeChangedEventArgs e)
+        //{
+        //    Canvas canvas = (Canvas)sender;
+        //    SizeChangedEventArgs canvas_Changed_Args = e;
+        //    if (canvas == null)
+        //    {
+        //        return;
+        //    }
+        //    else 
+        //    {
+        //        if((canvas.Children != null))
+        //        {
+
+        //            foreach (UIElement el in canvas.Children)
+        //            {
+        //                double proporcionX = 1;
+        //                double proporcionY = 1;
+
+        //                if (e.PreviousSize.Width != 0)
+        //                {
+        //                    proporcionX = Canvas.GetLeft(el) / e.PreviousSize.Width;
+
+        //                }
+        //                if (e.PreviousSize.Height != 0)
+        //                {
+        //                    proporcionY = Canvas.GetTop(el) / e.PreviousSize.Height;
+
+        //                }
+
+        //                Canvas.SetLeft(el, proporcionX * canvas.ActualWidth);
+        //                Canvas.SetTop(el, proporcionY * canvas.ActualHeight);
+
+        //                //if (el is FrameworkElement frEl)
+        //                //{
+        //                //    frEl.Width = proporcionX * frEl.ActualWidth;
+        //                //    frEl.Height = proporcionY * frEl.ActualHeight;
+        //                //}
+        //            }
+        //        }
+        //    }
+        //}
     }
 }
