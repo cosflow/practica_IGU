@@ -80,16 +80,16 @@ namespace pactometro
 
             e.Add(new Eleccion(resultado4, "Comunidad de CyL", "Autonómicas", "26/5/2019"));
 
-            //List<Resultado> resultado5 = new List<Resultado>();
+            List<Resultado> resultado5 = new List<Resultado>();
 
-            //resultado5.Add(new Resultado("PP", 33));
-            //resultado5.Add(new Resultado("PSOE", 22));
-            //resultado5.Add(new Resultado("CS", 18));
-            //resultado5.Add(new Resultado("PODEMOS", 8));
-            //resultado5.Add(new Resultado("XAV", 3));
-            //resultado5.Add(new Resultado("OTROS", 5));
+            resultado5.Add(new Resultado("PP", 33));
+            resultado5.Add(new Resultado("PSOE", 22));
+            resultado5.Add(new Resultado("CS", 18));
+            resultado5.Add(new Resultado("PODEMOS", 8));
+            resultado5.Add(new Resultado("XAV", 3));
+            resultado5.Add(new Resultado("OTROS", 5));
 
-            //e.Add(new Eleccion(resultado5, "Comunidad de CyL", "Autonómicas", "16/8/2015"));
+            e.Add(new Eleccion(resultado5, "Comunidad de CyL", "Autonómicas", "16/8/2015"));
 
 
 

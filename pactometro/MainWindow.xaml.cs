@@ -17,9 +17,6 @@ using System.Windows.Threading;
 
 namespace pactometro
 {
-    /// <summary>
-    /// Lógica de interacción para MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
         CDTablas cdTablas = null;
@@ -317,9 +314,6 @@ namespace pactometro
                 return;
             }
 
-            //MessageBox.Show("Cargados los datos históricos sobre las elecciones " 
-            //    + eleccionSeleccionada.Tipo + " del día " + eleccionSeleccionada.Fecha + " en " + eleccionSeleccionada.Parlamento);
-
             modo = 1;
             lienzo.Children.Clear();
 
@@ -442,48 +436,5 @@ namespace pactometro
                 }
             }
         }
-
-
-        //private void Canvas_SizeChanged(object sender, SizeChangedEventArgs e)
-        //{
-        //    Canvas canvas = (Canvas)sender;
-        //    SizeChangedEventArgs canvas_Changed_Args = e;
-        //    if (canvas == null)
-        //    {
-        //        return;
-        //    }
-        //    else 
-        //    {
-        //        if((canvas.Children != null))
-        //        {
-
-        //            foreach (UIElement el in canvas.Children)
-        //            {
-        //                double proporcionX = 1;
-        //                double proporcionY = 1;
-
-        //                if (e.PreviousSize.Width != 0)
-        //                {
-        //                    proporcionX = Canvas.GetLeft(el) / e.PreviousSize.Width;
-
-        //                }
-        //                if (e.PreviousSize.Height != 0)
-        //                {
-        //                    proporcionY = Canvas.GetTop(el) / e.PreviousSize.Height;
-
-        //                }
-
-        //                Canvas.SetLeft(el, proporcionX * canvas.ActualWidth);
-        //                Canvas.SetTop(el, proporcionY * canvas.ActualHeight);
-
-        //                //if (el is FrameworkElement frEl)
-        //                //{
-        //                //    frEl.Width = proporcionX * frEl.ActualWidth;
-        //                //    frEl.Height = proporcionY * frEl.ActualHeight;
-        //                //}
-        //            }
-        //        }
-        //    }
-        //}
     }
 }
