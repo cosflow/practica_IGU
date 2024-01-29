@@ -10,15 +10,15 @@ namespace pactometro
     public class DatosElecciones
     {
         
-        List<Eleccion> datoselecciones;
+        ObservableCollection<Eleccion> datoselecciones;
 
-        public DatosElecciones(List<Eleccion> elecciones)
+        public DatosElecciones(ObservableCollection<Eleccion> elecciones)
         {
             datoselecciones = elecciones;
             iniciarElecciones(elecciones);
         }
 
-        public void iniciarElecciones(List<Eleccion> e)
+        public void iniciarElecciones(ObservableCollection<Eleccion> e)
         {
             List<Resultado> resultado1 = new List<Resultado>();
             resultado1.Add(new Resultado("PP", 136));
@@ -90,9 +90,6 @@ namespace pactometro
             resultado5.Add(new Resultado("OTROS", 5));
 
             e.Add(new Eleccion(resultado5, "Comunidad de CyL", "Autonómicas", "16/8/2015"));
-
-
-
         }
     }
 }

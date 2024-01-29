@@ -10,6 +10,7 @@
         <Grid.RowDefinitions>
             <RowDefinition/>
             <RowDefinition/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
@@ -45,5 +46,8 @@
                 </GridView>
             </ListView.View>
         </ListView>
+        <Button x:Name="C_eleccion" Content="Añadir elección"  Grid.Column="0" Grid.Row="2" Height="20" Width="Auto" HorizontalAlignment="Center" Click="C_eleccion_Click"/>
+        <Button x:Name="U_eleccion" Content="Modificar elección"  Grid.Column="1" Grid.Row="2" Height="20" Width="Auto" HorizontalAlignment="Center" Click="U_eleccion_Click"/>
+        <Button x:Name="D_eleccion" Content="Añadir elección"  Grid.Column="2" Grid.Row="2" Height="20" Width="Auto" HorizontalAlignment="Center" Click="D_eleccion_Click"/>
     </Grid>
 </Window>

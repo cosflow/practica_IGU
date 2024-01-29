@@ -21,13 +21,12 @@ namespace pactometro
     {
         CDTablas cdTablas = null;
         Eleccion eleccionSeleccionada = null;
-        List<Eleccion> elecciones;
+        ObservableCollection<Eleccion> elecciones;
         int modo;
-
         public MainWindow()
         {
             InitializeComponent();
-            elecciones = new List<Eleccion>();
+            elecciones = new ObservableCollection<Eleccion>();
             DatosElecciones datos = new DatosElecciones(elecciones);
         }
 
@@ -291,7 +290,6 @@ namespace pactometro
             eleccionSeleccionada = e.eleccionSeleccionada;
             if(modo == 0) visualizarResultados(eleccionSeleccionada);
             if (modo == 1) obtenerHistorico(eleccionSeleccionada);
-
         }
 
         private void Historico_MenuItem_Click(object sender, RoutedEventArgs e)

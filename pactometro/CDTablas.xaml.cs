@@ -26,14 +26,15 @@ namespace pactometro
     }
     public partial class CDTablas : Window
     {
+        CRUD_Elecciones CRUD = null;
         DatosElecciones datos;
         public event EventHandler<CambioSeleccionEventArgs> CambioSeleccion;
-        List<Eleccion> listaElecciones;
+        ObservableCollection<Eleccion> listaElecciones;
         List<Resultado> listaResultados;
         public CDTablas()
         {
             InitializeComponent();
-            listaElecciones = new List<Eleccion>();
+            listaElecciones = new ObservableCollection<Eleccion>();
             listaResultados = new List<Resultado>();
             listaElecciones.Clear();
             tablaElecciones.Items.Clear();
@@ -61,6 +62,30 @@ namespace pactometro
                 tablaResultados.ItemsSource = listaResultados;
                 listaResultados.AddRange(eleccionSelect.Results);
             }
+        }
+        private void CRUD_Closed(object sender, EventArgs e)
+        {
+            CRUD = null;
+        }
+
+        private void C_eleccion_Click(object sender, RoutedEventArgs e)
+        {
+            if (CRUD == null)
+            {
+                CRUD = new CRUD_Elecciones();
+                CRUD.Closed += CRUD_Closed;
+            }
+            CRUD.Show();
+        }
+
+        private void U_eleccion_Click(object sender, RoutedEventArgs e)
+        {
+            
+        }
+
+        private void D_eleccion_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

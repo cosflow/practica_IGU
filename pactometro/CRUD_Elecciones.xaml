@@ -1,0 +1,30 @@
+﻿<Window x:Class="pactometro.CRUD_Elecciones"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:pactometro"
+        mc:Ignorable="d"
+        Title="CRUD_Elecciones" Height="300" Width="Auto">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <TextBlock TextAlignment="Justify" Text="Para introducir/modificar un partido siga, por favor siga los siguientes pasos:&#x0a;
+1. Introduzca el nombre del partido y sus escaños correspondientes.&#x0a;
+2. Pulse el botón Añadir el partido.&#x0a;
+3. Si necesita modificar o añadir más partidos, repita el proceso." Margin="5"/>
+        <StackPanel ScrollBar.Scroll="ScrollViewer_Scroll" Height="Auto" Margin="10" Grid.Row="1">
+            <ListBox x:Name="Resultados" Margin="5">
+                <TextBlock Margin="2" x:Name="txt_Resultado_Partido" Text="Partido:" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                <TextBlock Margin="2" x:Name="txt_Resultado_Escaños" Text="Escaños:" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Row="0"/>
+                <Button Margin="2" x:Name="btn_AñadePartido" Content="Añade el partido" HorizontalAlignment="Center" Padding="4"/>
+            </ListBox>
+            <TextBlock Margin="2" x:Name="txt_Tipo" Text="Tipo (Generales/Autonómicas):" VerticalAlignment="Center"/>
+            <TextBlock Margin="2" x:Name="txt_Fecha" Text="Fecha (DD/MM/AAAA):" VerticalAlignment="Center" />
+            <TextBlock Margin="2" x:Name="txt_Parlamento" Text="Parlamento (Cortes Generales/Parlamento autonómico):" VerticalAlignment="Center"/>
+            
+        </StackPanel>
+    </Grid>
+</Window>
