@@ -9,10 +9,10 @@ using System.Threading.Tasks;
 
 namespace pactometro
 {
-    public class Eleccion
+    public class Eleccion : INotifyPropertyChanged
     {
 
-        public PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler PropertyChanged;
 
         List<Resultado> results;
         string parlamento;
@@ -23,26 +23,27 @@ namespace pactometro
         string titulo;
         string partidos;
         string escaños;
+
         public List<Resultado> Results
         {
             get { return results; }
-            set { results = value; }
+            set { results = value; OnPropertyChanged("Results")}
         }
         public string Parlamento
         {
             get { return parlamento; }
-            set { parlamento = value; }
+            set { parlamento = value; OnPropertyChanged("Parlamento")}
         }
         public string Fecha
         {
             get { return fecha; }
-            set { fecha = value; }
+            set { fecha = value; OnPropertyChanged("Fecha") }
         }
 
         public string Tipo
         {
             get { return tipo; }
-            set { tipo = value; }
+            set { tipo = value; OnPropertyChanged("Tipo")}
         }
         public int TotalEscaños
         {
