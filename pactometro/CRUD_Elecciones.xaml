@@ -11,11 +11,15 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
         <TextBlock TextAlignment="Justify" Text="Para introducir/modificar un partido siga, por favor siga los siguientes pasos:&#x0a;
 1. Introduzca el nombre del partido y sus escaños correspondientes.&#x0a;
 2. Pulse el botón Añadir el partido.&#x0a;
 3. Si necesita modificar o añadir más partidos, repita el proceso." Margin="5"/>
-        <StackPanel ScrollBar.Scroll="ScrollViewer_Scroll" Height="Auto" Margin="10" Grid.Row="1">
+        <StackPanel ScrollBar.Scroll="ScrollViewer_Scroll" Height="Auto" Margin="10" Grid.Row="1" Grid.Column="0">
             <ListBox x:Name="Resultados" Margin="5">
                 <TextBlock Margin="2" x:Name="txt_Resultado_Partido" Text="Partido:" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                 <TextBlock Margin="2" x:Name="txt_Resultado_Escaños" Text="Escaños:" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Row="0"/>
@@ -24,7 +28,14 @@
             <TextBlock Margin="2" x:Name="txt_Tipo" Text="Tipo (Generales/Autonómicas):" VerticalAlignment="Center"/>
             <TextBlock Margin="2" x:Name="txt_Fecha" Text="Fecha (DD/MM/AAAA):" VerticalAlignment="Center" />
             <TextBlock Margin="2" x:Name="txt_Parlamento" Text="Parlamento (Cortes Generales/Parlamento autonómico):" VerticalAlignment="Center"/>
-            
+        </StackPanel>
+        <StackPanel Grid.Row="1" Grid.Column="1" Width="50" Margin="10">
+            <TextBox Margin="2"/>
+            <TextBox Margin="2"/>
+            <TextBox Margin="2"/>
+            <TextBox Margin="2"/>
+            <TextBox Margin="2"/>
+            <TextBox Margin="2"/>
         </StackPanel>
     </Grid>
 </Window>
