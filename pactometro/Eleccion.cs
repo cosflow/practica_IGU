@@ -27,23 +27,23 @@ namespace pactometro
         public List<Resultado> Results
         {
             get { return results; }
-            set { results = value; OnPropertyChanged("Results")}
+            set { results = value; OnPropertyChanged("Results"); }
         }
         public string Parlamento
         {
             get { return parlamento; }
-            set { parlamento = value; OnPropertyChanged("Parlamento")}
+            set { parlamento = value; OnPropertyChanged("Parlamento"); }
         }
         public string Fecha
         {
             get { return fecha; }
-            set { fecha = value; OnPropertyChanged("Fecha") }
+            set { fecha = value; OnPropertyChanged("Fecha"); }
         }
 
         public string Tipo
         {
             get { return tipo; }
-            set { tipo = value; OnPropertyChanged("Tipo")}
+            set { tipo = value; OnPropertyChanged("Tipo"); }
         }
         public int TotalEscaños
         {

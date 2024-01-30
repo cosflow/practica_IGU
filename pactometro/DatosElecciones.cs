@@ -9,12 +9,8 @@ namespace pactometro
 {
     public class DatosElecciones
     {
-        
-        ObservableCollection<Eleccion> datoselecciones;
-
         public DatosElecciones(ObservableCollection<Eleccion> elecciones)
         {
-            datoselecciones = elecciones;
             iniciarElecciones(elecciones);
         }
 

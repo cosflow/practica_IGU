@@ -273,7 +273,7 @@ namespace pactometro
         {
             if (cdTablas == null)
             {
-                cdTablas = new CDTablas();
+                cdTablas = new CDTablas(elecciones);
                 cdTablas.Closed += cdTablas_Closed;
                 cdTablas.CambioSeleccion += Cdsec_CambioSeleccion;
             }
@@ -433,6 +433,23 @@ namespace pactometro
 
                 }
             }
+        }
+
+        private void Eleccion_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            Eleccion eleccion = (Eleccion)sender;
+            switch (e.PropertyName)
+            {
+                case "Results":
+                    break;
+                case "Tipo":
+                    break;
+                case "Fecha":
+                    break;
+                case "Parlamento":
+                    break;
+            }
+
         }
     }
 }
