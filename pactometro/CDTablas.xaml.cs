@@ -78,12 +78,17 @@ namespace pactometro
             CRUD.Show();
         }
 
-        private void U_eleccion_Click(object sender, RoutedEventArgs e)
+        private void U_eleccion_Click(object sender, SelectionChangedEventArgs e)
         {
-            
+            if (CRUD == null)
+            {
+                CRUD = new CRUD_Elecciones();
+                CRUD.Closed += CRUD_Closed;
+            }
+            CRUD.Show();
         }
 
-        private void D_eleccion_Click(object sender, RoutedEventArgs e)
+        private void D_eleccion_Click(object sender, SelectionChangedEventArgs e)
         {
 
         }

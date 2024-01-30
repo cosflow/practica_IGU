@@ -15,9 +15,6 @@ using System.Windows.Shapes;
 
 namespace pactometro
 {
-    /// <summary>
-    /// Lógica de interacción para CRUD_Elecciones.xaml
-    /// </summary>
     public partial class CRUD_Elecciones : Window
     {
         public CRUD_Elecciones()
@@ -26,12 +23,13 @@ namespace pactometro
             InitializeComponent();
             DatosElecciones datos = new DatosElecciones(elecciones);
         }
-        private void Create_Eleccion(object sender, EventArgs e)
+        
+        private void btn_AñadePartido_Click(object sender, RoutedEventArgs e)
         {
-            
+
         }
 
-        private void ScrollViewer_Scroll(object sender, System.Windows.Controls.Primitives.ScrollEventArgs e)
+        private void btn_Guardar_Click(object sender, RoutedEventArgs e)
         {
 
         }
