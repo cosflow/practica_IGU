@@ -20,11 +20,7 @@
             </Grid.RowDefinitions>
         
             <Border BorderBrush="Black" BorderThickness="1" Margin="5" Grid.ColumnSpan="2">
-                <TextBlock TextAlignment="Justify" Text="Para introducir/modificar un resultado electoral, por favor siga los siguientes pasos:&#x0a;
-            1. Introduzca el nombre del partido y sus escaños correspondientes.&#x0a;
-            2. Pulse el botón 'Añadir' para registrar el resultado.&#x0a;
-            3. Si necesita modificar o añadir más partidos, repita el proceso.&#x0a;
-            4. Para registrar los cambios realizados, pulse el botón guardar." Margin="5" Padding="5" Background="Beige" TextWrapping="Wrap"/>
+                <TextBlock x:Name="txt_Instrucciones" TextAlignment="Justify"  Margin="5" Padding="5" Background="Beige" TextWrapping="Wrap"/>
             </Border>
 
             <Border BorderBrush="MediumPurple" BorderThickness="1" Margin="5" Grid.Row="1">

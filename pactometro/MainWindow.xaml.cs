@@ -46,7 +46,9 @@ namespace pactometro
                 }
                 tituloEleccion.FontSize = 20;
                 List<Resultado> resultados = e.Results;
+                
                 double[] alturas = obtenerAlturasPorcentuales(resultados);
+                if (alturas == null) return;
 
                 int tam = resultados.Count;
                 double inicio = lienzo.ActualWidth/10;
@@ -80,6 +82,7 @@ namespace pactometro
                     TextBlock part = new TextBlock();
                     Rectangle rect = new Rectangle();
                     rect.Width = ancho;
+                    
                     rect.Height = alturas[i];
                     ScaleTransform scaleTransform = new ScaleTransform(1, -1);
                     int numReps = 0;
@@ -218,6 +221,10 @@ namespace pactometro
                 for (int i = 0; i < tam; i++)
                 {
                     alturas[i] = resultados[i].Escaños * alturaMax / mayor;
+                    if (alturas[i] <= 0)
+                    {
+                        return null;
+                    }
                 }
             }
             return alturas;
@@ -252,9 +259,7 @@ namespace pactometro
 
                     return Color.FromRgb(r,g,b);
             }
-            
         }
-
         private void lienzo_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             if (eleccionSeleccionada != null)
@@ -398,7 +403,7 @@ namespace pactometro
                 fecha.FontSize = 8;
 
                 Canvas.SetRight(r,7*fondo.Width/12);
-                Canvas.SetTop(r, 50/(2-i)-r.Height-5);
+                Canvas.SetTop(r, 50/((2-i)+1)-r.Height-5);
 
                 Canvas.SetRight(fecha,fondo.Width / 12);
                 Canvas.SetTop(fecha, Canvas.GetTop(r)-5);

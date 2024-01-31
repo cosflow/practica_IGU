@@ -100,13 +100,16 @@ namespace pactometro
             {
                 return;
             }
-            foreach (Eleccion el in listaElecciones)
+            int i = 0;
+            foreach(Eleccion el in listaElecciones)
             {
-                if (el.Título.Equals(eleccionSelect.Título))
+                if (el.Equals(eleccionSelect))
                 {
-                    listaElecciones.Remove(el);
+                    break;
                 }
+                else i++;
             }
+            listaElecciones.RemoveAt(i);
         }
     }
 }
