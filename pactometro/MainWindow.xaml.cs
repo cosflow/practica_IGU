@@ -135,7 +135,6 @@ namespace pactometro
                         generarEjes(resultados[i].Escaños,rect);
                     }
                 }
-                
             }
         }
 
@@ -245,11 +244,13 @@ namespace pactometro
                 case "XAV": return Colors.Crimson;
                 case "SY": return Colors.Azure;
                 default:
-                    byte[] rgb = new byte[3];
+                    byte r,g,b;
                     Random random = new Random();
-                    random.NextBytes(rgb);
+                    r = (byte)random.Next(256);
+                    g = (byte)random.Next(256);
+                    b = (byte)random.Next(256);
 
-                    return Color.FromRgb(rgb[0], rgb[1], rgb[2]);
+                    return Color.FromRgb(r,g,b);
             }
             
         }
