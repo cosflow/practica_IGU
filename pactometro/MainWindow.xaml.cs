@@ -430,13 +430,24 @@ namespace pactometro
             {
                 return;
             }
-            List<Resultado> resultados = new List<Resultado>();
+            List<Resultado> resultados = eleccionSeleccionada.Results;
+            List<Resultado> mayoríaList = new List<Resultado>();
+            Resultado mayor = new Resultado("Mayoría", eleccionSeleccionada.Mayoría);
+            mayoríaList.Add(mayor);
+
             double[] alturas = obtenerAlturasPorcentuales(resultados);
+            double[] m = obtenerAlturasPorcentuales(mayoríaList);
+
+            double mayoríaAbs = m[0];
+
+            Line linea_Mayor = new Line();
+
             foreach(Resultado resultado in resultados)
             {
                 if (resultado.Escaños >= eleccionSeleccionada.Mayoría)
                 {
 
+                    break;
                 }
             }
         }
@@ -455,7 +466,6 @@ namespace pactometro
                 case "Parlamento":
                     break;
             }
-
         }
     }
 }
