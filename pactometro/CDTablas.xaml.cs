@@ -53,10 +53,8 @@ namespace pactometro
                 Eleccion eleccionSelect = (Eleccion)tablaElecciones.SelectedItem;
                 CambioSeleccionEventArgs misargs = new CambioSeleccionEventArgs(eleccionSelect);
                 OnCambioSeleccion(misargs);
-                tablaResultados.ItemsSource = null;
-                listaResultados.Clear();
+                listaResultados = eleccionSelect.Results;
                 tablaResultados.ItemsSource = listaResultados;
-                listaResultados.AddRange(eleccionSelect.Results);
                 btn_D_eleccion.IsEnabled = true;
                 btn_U_eleccion.IsEnabled = true;
             }

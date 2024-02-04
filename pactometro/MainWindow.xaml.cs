@@ -45,10 +45,9 @@ namespace pactometro
                         break;
                 }
                 tituloEleccion.FontSize = 20;
-                List<Resultado> resultados = e.Results;
-                
-                double[] alturas = obtenerAlturasPorcentuales(resultados);
-                if (alturas == null) return;
+                List<Resultado> resultados = obtenerAlturasPorcentuales(e);
+
+                if (resultados == null) return;
 
                 int tam = resultados.Count;
                 double inicio = lienzo.ActualWidth/10;
@@ -58,17 +57,20 @@ namespace pactometro
 
                 double mayor = 0;
                 int indice = 0;
-                for (int j = 0; j < tam; j++)
+                int j = 0;
+                foreach (Resultado r in resultados)
                 {
-                    if (alturas[j] > mayor)
+                    if (r.Altura > mayor)
                     {
-                        mayor = alturas[j];
+                        mayor = r.Altura;
                         indice = j;
                     }
+                    j++;
                 }
 
                 List<String> repetidos = new List<String>();
                 List<String> fechasRep = new List<String>();
+                Resultado[] rs = resultados.ToArray();
                 for (int i = 0; i < tam; i++)
                 {
                     if (i == 0)
@@ -83,11 +85,11 @@ namespace pactometro
                     Rectangle rect = new Rectangle();
                     rect.Width = ancho;
                     
-                    rect.Height = alturas[i];
-                    ScaleTransform scaleTransform = new ScaleTransform(1, -1);
+                    rect.Height = rs[i].Altura;
+                    ScaleTransform rotar180 = new ScaleTransform(1, -1);
                     int numReps = 0;
 
-                    rect.RenderTransform = scaleTransform;
+                    rect.RenderTransform = rotar180;
                     if (repetidos.Count == 0)
                     {
                         part.Text = resultados[i].Partido;
@@ -143,31 +145,7 @@ namespace pactometro
 
         private void generarEjes(int maxResult,Rectangle rect)
         {
-            int division;
-            if (maxResult > 100)
-            {
-                while (maxResult % 20 != 0)
-                {
-                    maxResult++;
-                }
-                division = 20;
-            }
-            else if (maxResult > 50)
-            {
-                while (maxResult % 10 != 0)
-                {
-                    maxResult++;
-                }
-                division = 10;
-            }
-            else
-            {
-                while (maxResult % 5 != 0)
-                {
-                    maxResult++;
-                }
-                division = 5;
-            }
+            int division = maxResult/6;
             double conversion = rect.Height/ (double) maxResult;
 
             int alturaMax = 1;
@@ -200,34 +178,38 @@ namespace pactometro
             }
         }
 
-        private double[] obtenerAlturasPorcentuales(List<Resultado> resultados)
+        private List<Resultado> obtenerAlturasPorcentuales(Eleccion e)
         {
-            int tam = resultados.Count;
-            double[] alturas = new double[tam];
+            if (e == null) return null;
+            List<Resultado> resultados = e.Results;
+
+            if (modo == 2)
+            {
+                Resultado mayoría = new Resultado("Mayoría", e.Mayoría);
+                resultados.Add(mayoría);
+            }
 
             double alturaMax = (lienzo.ActualHeight - lienzo.Margin.Top)*.9;
+            double mayor = 0;
 
-            if (resultados != null)
+            foreach (Resultado r in resultados)
             {
-                double mayor = 0;
-                for (int j = 0; j < tam; j++ )
+                if (r.Escaños > mayor)
                 {
-                    if (resultados[j].Escaños > mayor)
-                    {
-                        mayor = resultados[j].Escaños;
-                    }
-                }
-
-                for (int i = 0; i < tam; i++)
-                {
-                    alturas[i] = resultados[i].Escaños * alturaMax / mayor;
-                    if (alturas[i] <= 0)
-                    {
-                        return null;
-                    }
+                    mayor = r.Escaños;
                 }
             }
-            return alturas;
+
+            foreach (Resultado r in resultados)
+            {
+                r.Altura = r.Escaños * alturaMax / mayor;
+                if (r.Altura <= 0)
+                {
+                    return null;
+                }
+            }
+            
+            return resultados;
         }
         private Color getColor(String partido)
         {
@@ -272,6 +254,10 @@ namespace pactometro
                 if(modo == 1)
                 {
                     obtenerHistorico(eleccionSeleccionada);
+                }
+                if(modo == 2)
+                {
+                    visualizarResultadosPactómetro(eleccionSeleccionada);
                 }
             }
         }
@@ -428,30 +414,89 @@ namespace pactometro
         {
             if(eleccionSeleccionada == null)
             {
+                MessageBox.Show("ERROR\nSeleccione una elección en la ventana de  Opciones->Registro, por favor");
                 return;
             }
-            List<Resultado> resultados = eleccionSeleccionada.Results;
-            List<Resultado> mayoríaList = new List<Resultado>();
-            Resultado mayor = new Resultado("Mayoría", eleccionSeleccionada.Mayoría);
-            mayoríaList.Add(mayor);
+            lienzo.Children.Clear();
+            modo = 2;
+            visualizarResultadosPactómetro(eleccionSeleccionada);
+        }
 
-            double[] alturas = obtenerAlturasPorcentuales(resultados);
-            double[] m = obtenerAlturasPorcentuales(mayoríaList);
+        private void visualizarResultadosPactómetro(Eleccion e)
+        {
+            if (e == null) return;
 
-            double mayoríaAbs = m[0];
-
-            Line linea_Mayor = new Line();
-
-            foreach(Resultado resultado in resultados)
+            switch (e.Tipo)
             {
-                if (resultado.Escaños >= eleccionSeleccionada.Mayoría)
-                {
+                case "Generales":
+                    tituloEleccion.Text = e.Tipo + " " + e.Fecha;
+                    break;
+                default:
+                    tituloEleccion.Text = e.Tipo + " " + e.Parlamento + " " + e.Fecha;
+                    break;
+            }
+            tituloEleccion.FontSize = 20;
 
+            int col = 2;
+            bool hayMayoría = false;
+            List<Resultado> resultados = obtenerAlturasPorcentuales(e);
+            ScaleTransform scaleTransform = new ScaleTransform(1, -1);
+
+            if (resultados == null) return;
+
+            Rectangle linea_Mayor = new Rectangle();
+            SolidColorBrush pincel = new SolidColorBrush();
+            pincel.Color = Colors.Black;
+            linea_Mayor.Width = lienzo.ActualWidth;
+            linea_Mayor.Height = 1;
+            linea_Mayor.Fill = pincel;
+            Canvas.SetLeft(linea_Mayor, 0);
+            lienzo.Children.Add(linea_Mayor);
+            double alturaM = 0;
+            Resultado aux = null;
+            foreach (Resultado r in resultados)
+            {
+                if (r.Partido.Equals("Mayoría"))
+                {
+                    aux = r;
+                    alturaM = r.Altura;
                     break;
                 }
             }
-        }
+            if(aux != null) resultados.Remove(aux);
+            Canvas.SetBottom(linea_Mayor, alturaM);
 
+
+            foreach (Resultado r in resultados)
+            {
+                if (r.Escaños >= e.Mayoría)
+                {
+                    aux = r;
+                    hayMayoría = true;
+                    break;
+                }
+            }
+
+            if (hayMayoría)
+            {
+                Rectangle rect = new Rectangle();
+                Point p = new Point();
+                p.X = lienzo.ActualWidth / 4;
+                p.Y = (lienzo.ActualHeight - lienzo.Margin.Top);
+                SolidColorBrush brocha = new SolidColorBrush(getColor(aux.Partido));
+                rect.RenderTransform = scaleTransform;
+                rect.Fill = brocha;
+                rect.Width = lienzo.ActualWidth/3;
+                rect.Height = aux.Altura;
+                Canvas.SetLeft(rect, p.X);
+                Canvas.SetTop(rect,p.Y);
+                lienzo.Children.Add(rect);
+                return;
+            }
+
+            Point[] puntos = new Point[e.Results.Count];
+
+        }
         private void Eleccion_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             Eleccion eleccion = (Eleccion)sender;

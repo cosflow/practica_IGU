@@ -15,7 +15,7 @@ namespace pactometro
 
         public string partido;
         public int escaños;
-        
+        public double altura;
 
         public string Partido
         {
@@ -29,10 +29,17 @@ namespace pactometro
             set { escaños = value; OnPropertyChanged("Escaños"); }
         }
 
+        public double Altura
+        {
+            get { return altura; }
+            set { altura = value; OnPropertyChanged("Altura"); }
+        }
+
         public Resultado(string p, int e)
         {
             Partido = p;
             Escaños = e;
+            Altura = 0;
         }
 
         void OnPropertyChanged(string propertyName)

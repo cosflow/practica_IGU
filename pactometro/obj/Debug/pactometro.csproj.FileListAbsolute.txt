@@ -32,3 +32,5 @@ C:\Users\andre\Documents\GitHub\practica_IGU\pactometro\obj\Debug\CDTablas.g.cs
 C:\Users\andre\Documents\GitHub\practica_IGU\pactometro\obj\Debug\CDTablas.baml
 C:\Users\andre\Documents\GitHub\practica_IGU\pactometro\obj\Debug\CRUD_Elecciones.g.cs
 C:\Users\andre\Documents\GitHub\practica_IGU\pactometro\obj\Debug\CRUD_Elecciones.baml
+C:\Users\andre\Documents\GitHub\practica_IGU\pactometro\obj\Debug\Pactómetro.g.cs
+C:\Users\andre\Documents\GitHub\practica_IGU\pactometro\obj\Debug\Pactómetro.baml

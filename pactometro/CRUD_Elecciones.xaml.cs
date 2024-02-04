@@ -38,20 +38,21 @@ namespace pactometro
                     "y ponga el número de escaños a 0.\n" +
                     "Las fechas han de estar especificadas en el formato DD/MM/AAAA.\n" +
                     "El tipo de elección debe ser especificado como 'G' (Generales) o 'A' (Autonómicas)" +
-                    "---------------------------------------------\n\n";
+                    "\n\n---------------------------------------------\n\n";
             if (eleccion != null)
             {
                 modo = 1;
                 eleccionSeleccionada = eleccion;
+                resultados = eleccionSeleccionada.Results;
                 txtBox_Parlamento.Text = eleccionSeleccionada.Parlamento;
                 if (eleccionSeleccionada.Tipo.Equals("Generales")) txtBox_Tipo.Text = "G"; else txtBox_Tipo.Text = "A";
                 txtBox_Fecha.Text = eleccionSeleccionada.Fecha;
                 txt_Instrucciones.Text =
-                    "-----------MODIFICIAR UNA ELECCIÓN-----------\n\n" + txt_Instrucciones.Text;
+                    "\n-----------MODIFICIAR UNA ELECCIÓN-----------\n\n" + txt_Instrucciones.Text;
             }
             else
             {
-                txt_Instrucciones.Text = "-------------CREAR UNA ELECCIÓN-------------\n\n" + txt_Instrucciones.Text;
+                txt_Instrucciones.Text = "\n-------------CREAR UNA ELECCIÓN-------------\n\n" + txt_Instrucciones.Text;
             }
         }
         private void btn_AñadePartido_Click(object sender, RoutedEventArgs e)
@@ -61,10 +62,8 @@ namespace pactometro
 
             if (txtBox_Escaños.Text == "" && txtBox_Partido.Text == "")
             {
-
                 MessageBox.Show("ERROR. Introduzca el partido y sus escaños");
                 return;
-
             }
 
             if (txtBox_Escaños.Text == "")
@@ -84,7 +83,7 @@ namespace pactometro
             Resultado r = new Resultado(partido, escaños);
             int index = 0;
             
-            foreach(Resultado res in eleccionSeleccionada.Results)
+            foreach(Resultado res in resultados)
             {
                 if (res.Partido.Equals(partido))
                 {
@@ -103,6 +102,7 @@ namespace pactometro
                 }
                 index++;
             }
+            
             if(escaños == 0)
             {
                 MessageBox.Show("ERROR. Se ha intentado eliminar un resultado de un partido " +
