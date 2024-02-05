@@ -9,22 +9,22 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <RowDefinition/>
+            <RowDefinition />
             <RowDefinition Height="Auto"/>
-            <RowDefinition/>
+            <RowDefinition />
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        <TextBlock x:Name="nombreElección" Grid.Row="0" HorizontalAlignment="Center"/>
-        <StackPanel Orientation="Vertical" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center">
-            <Button x:Name="btn_AñadirResultado" Content="Añadir Resultado" Padding="2" Margin="5" IsEnabled="False"/>
-            <TextBlock x:Name="resultadosAñadidos_Title" Grid.Row="2" Text="Resultados añadidos:" VerticalAlignment="Center"/>
+        <TextBlock x:Name="nombreElección" Grid.Row="0" HorizontalAlignment="Center" Margin="5"/>
+        <StackPanel Orientation="Vertical" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5">
+            <Button x:Name="btn_AñadirResultado" Content="Añadir Resultado" Padding="2" Margin="5" IsEnabled="False" Click="btn_AñadirResultado_Click" />
+            <TextBlock x:Name="resultadosAñadidos_Title" Grid.Row="2" Text="Resultados añadidos:" VerticalAlignment="Center" Margin="5"/>
         </StackPanel>
-        <Button x:Name="btn_EliminarResultado" Content="Borrar Resultado" Padding="2" Margin="5" IsEnabled="False" Grid.Row="4"/>
-        <ListView Name="tablaResultados" Margin="10"  Grid.Row="1" >
+        <Button x:Name="btn_EliminarResultado" Content="Borrar Resultado" Padding="2" Margin="5" IsEnabled="False" Grid.Row="4" Click="btn_EliminarResultado_Click" />
+        <ListView SelectionChanged="tablaResultados_SelectionChanged" Name="tablaResultados" Margin="10"  Grid.Row="1"  >
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="PARTIDO" Width="Auto" DisplayMemberBinding="{Binding Partido}" />
@@ -32,7 +32,7 @@
                 </GridView>
             </ListView.View>
         </ListView>
-        <ListView Name="tablaResultadosAñadidos" Margin="10"  Grid.Row="3"  Grid.Column="0">
+        <ListView SelectionChanged="tablaResultadosAñadidos_SelectionChanged" Name="tablaResultadosAñadidos" Margin="10"  Grid.Row="3"  Grid.Column="0" >
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="PARTIDO" Width="Auto" DisplayMemberBinding="{Binding Partido}" />
@@ -40,7 +40,7 @@
                 </GridView>
             </ListView.View>
         </ListView>
-        <TextBlock x:Name="txt_Mayoría" Grid.Column="1" Grid.Row="1" FontSize="20" TextWrapping="Wrap"/>
-        <TextBlock x:Name="txt_ResultadosRestantes" Grid.Column="1" Grid.Row="3" FontSize="20" TextWrapping="Wrap"/>
+        <TextBlock x:Name="txt_Mayoría" Text="Mayoría: " Margin="5" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Column="1" Grid.Row="1" FontSize="20" TextWrapping="Wrap"/>
+        <TextBlock x:Name="txt_ResultadosRestantes" Margin="5" Text="Resultados restantes para mayoría: " VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Column="1" Grid.Row="3" FontSize="20" TextWrapping="Wrap"/>
     </Grid>
 </Window>

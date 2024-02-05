@@ -16,7 +16,7 @@ namespace pactometro
 
         public void iniciarElecciones(ObservableCollection<Eleccion> e)
         {
-            List<Resultado> resultado1 = new List<Resultado>();
+            ObservableCollection<Resultado> resultado1 = new ObservableCollection<Resultado>();
             resultado1.Add(new Resultado("PP", 136));
             resultado1.Add(new Resultado("PSOE", 122));
             resultado1.Add(new Resultado("VOX", 33));
@@ -31,7 +31,7 @@ namespace pactometro
             e.Add(new Eleccion(resultado1, "CORTES GENERALES", "Generales", "23/7/2023"));
 
 
-            List<Resultado> resultado2 = new List<Resultado>();
+            ObservableCollection<Resultado> resultado2 = new ObservableCollection<Resultado>();
 
             resultado2.Add(new Resultado("PSOE", 120));
             resultado2.Add(new Resultado("PP", 89));
@@ -50,7 +50,7 @@ namespace pactometro
 
             e.Add(new Eleccion(resultado2, "CORTES GENERALES", "Generales", "10/11/2019"));
 
-            List<Resultado> resultado3 = new List<Resultado>();
+            ObservableCollection<Resultado> resultado3 = new ObservableCollection<Resultado>();
 
             resultado3.Add(new Resultado("PP", 31));
             resultado3.Add(new Resultado("PSOE", 28));
@@ -64,7 +64,7 @@ namespace pactometro
 
             e.Add(new Eleccion(resultado3, "Comunidad de CyL", "Autonómicas", "14/2/2022"));
 
-            List<Resultado> resultado4 = new List<Resultado>();
+            ObservableCollection<Resultado> resultado4 = new ObservableCollection<Resultado>();
 
             resultado4.Add(new Resultado("PSOE", 35));
             resultado4.Add(new Resultado("PP", 29));
@@ -76,7 +76,7 @@ namespace pactometro
 
             e.Add(new Eleccion(resultado4, "Comunidad de CyL", "Autonómicas", "26/5/2019"));
 
-            List<Resultado> resultado5 = new List<Resultado>();
+            ObservableCollection<Resultado> resultado5 = new ObservableCollection<Resultado>();
 
             resultado5.Add(new Resultado("PP", 33));
             resultado5.Add(new Resultado("PSOE", 22));

@@ -19,7 +19,7 @@ namespace pactometro
     {
 
         ObservableCollection<Eleccion> elecciones;
-        List<Resultado> resultados;
+        ObservableCollection<Resultado> resultados;
         Eleccion eleccionSeleccionada = null;
         int modo = 0;
 
@@ -27,7 +27,7 @@ namespace pactometro
         {
             elecciones = e;
             InitializeComponent();
-            resultados = new List<Resultado>();
+            resultados = new ObservableCollection<Resultado>();
             txt_Instrucciones.Text = "Instrucciones: \n\n" +
                     "Para AÑADIR/MODIFICAR un resultado electoral, por favor siga los siguientes pasos:\n" +
                     "\t1. Introduzca el nombre del partido y sus escaños correspondientes.\n" +
@@ -197,7 +197,7 @@ namespace pactometro
             txtBox_Tipo.Text = "";
             txtBox_Fecha.Text = "";
 
-            resultados = new List<Resultado>();
+            resultados = new ObservableCollection<Resultado>();
         }
     }
 }

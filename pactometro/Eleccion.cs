@@ -14,7 +14,7 @@ namespace pactometro
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        List<Resultado> results;
+        ObservableCollection<Resultado> results;
         string parlamento;
         string tipo;
         string fecha;
@@ -24,7 +24,7 @@ namespace pactometro
         string partidos;
         string escaños;
 
-        public List<Resultado> Results
+        public ObservableCollection<Resultado> Results
         {
             get { return results; }
             set { results = value; OnPropertyChanged("Results"); }
@@ -70,7 +70,7 @@ namespace pactometro
             get { return escaños; }
         }
 
-        public Eleccion(List<Resultado> results, string parlamento, string tipo, string fecha)
+        public Eleccion(ObservableCollection<Resultado> results, string parlamento, string tipo, string fecha)
         {
             Results = results;
             Parlamento = parlamento;

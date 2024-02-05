@@ -20,7 +20,7 @@ namespace pactometro
     public partial class MainWindow : Window
     {
         CDTablas cdTablas = null;
-        CDPactómetro cdpactometro = null;
+        CDPactómetro cdPactometro = null;
 
         Eleccion eleccionSeleccionada = null;
         ObservableCollection<Eleccion> elecciones;
@@ -58,7 +58,7 @@ namespace pactometro
                         break;
                 }
                 tituloEleccion.FontSize = 20;
-                List<Resultado> resultados = obtenerAlturasPorcentuales(e);
+                ObservableCollection<Resultado> resultados = obtenerAlturasPorcentuales(e);
 
                 if (resultados == null) return;
 
@@ -215,10 +215,10 @@ namespace pactometro
 
             lienzo.Children.Add(linea_Mayor);
         }
-        private List<Resultado> obtenerAlturasPorcentuales(Eleccion e)
+        private ObservableCollection<Resultado> obtenerAlturasPorcentuales(Eleccion e)
         {
             if (e == null) return null;
-            List<Resultado> resultados = e.Results;
+            ObservableCollection<Resultado> resultados = e.Results;
             double alturaMax = (lienzo.ActualHeight - lienzo.Margin.Top)*.9;
             double mayor = 0;
 
@@ -325,7 +325,7 @@ namespace pactometro
         {
             cdTablas = null; 
         }
-        private void Cdsec_CambioSeleccion(object sender, CambioSeleccionEventArgs e)
+        private void Cdsec_CambioSeleccion(object sender, CambioSeleccionEleccionEventArgs e)
         {
             lienzo.Children.Clear();
             eleccionSeleccionada = e.eleccionSeleccionada;
@@ -364,7 +364,7 @@ namespace pactometro
                 parts[i] = eleccion.Results[i].Partido;
             }
 
-            List<Resultado> resultados = new List<Resultado>();
+            ObservableCollection<Resultado> resultados = new ObservableCollection<Resultado>();
             List<String> fechasRep = new List<string>();
             string[] partes = eleccion.Fecha.Split('/');
 
@@ -489,7 +489,7 @@ namespace pactometro
             tituloEleccion.FontSize = 20;
 
             bool hayMayoría = false;
-            List<Resultado> resultados = obtenerAlturasPorcentuales(e);
+            ObservableCollection<Resultado> resultados = obtenerAlturasPorcentuales(e);
             ScaleTransform rotar180 = new ScaleTransform(1, -1);
 
             if (resultados == null) return;
@@ -610,7 +610,18 @@ namespace pactometro
         }
         private void btn_GestionarPactos_Click(object sender, RoutedEventArgs e)
         {
-
+            if (cdPactometro == null)
+            {
+                cdPactometro = new CDPactómetro(eleccionSeleccionada);
+                cdPactometro.Closed += cdPactómetro_Closed;
+            }
+            cdPactometro.Show();
         }
+
+        void cdPactómetro_Closed(object sender, EventArgs e)
+        {
+            cdPactometro = null;
+        }
+
     }
 }

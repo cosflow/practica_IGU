@@ -15,11 +15,11 @@ using System.Windows.Shapes;
 
 namespace pactometro
 {
-    public class CambioSeleccionEventArgs : EventArgs
+    public class CambioSeleccionEleccionEventArgs : EventArgs
     {
         public Eleccion eleccionSeleccionada { get; set; }
 
-        public CambioSeleccionEventArgs(Eleccion e)
+        public CambioSeleccionEleccionEventArgs(Eleccion e)
         {
             eleccionSeleccionada = e;
         }
@@ -27,9 +27,9 @@ namespace pactometro
     public partial class CDTablas : Window
     {
         CRUD_Elecciones CRUD = null;
-        public event EventHandler<CambioSeleccionEventArgs> CambioSeleccion;
+        public event EventHandler<CambioSeleccionEleccionEventArgs> CambioSeleccion;
         ObservableCollection<Eleccion> listaElecciones;
-        List<Resultado> listaResultados = new List<Resultado>();
+        ObservableCollection<Resultado> listaResultados = new ObservableCollection<Resultado>();
         public CDTablas(ObservableCollection<Eleccion> l)
         {
             InitializeComponent();
@@ -41,7 +41,7 @@ namespace pactometro
             tablaResultados.ItemsSource = listaResultados;
         }
 
-        void OnCambioSeleccion(CambioSeleccionEventArgs e)
+        void OnCambioSeleccion(CambioSeleccionEleccionEventArgs e)
         {
             if (CambioSeleccion != null) CambioSeleccion(this, e);
         }
@@ -51,7 +51,7 @@ namespace pactometro
             if (tablaElecciones.SelectedItem != null)
             {
                 Eleccion eleccionSelect = (Eleccion)tablaElecciones.SelectedItem;
-                CambioSeleccionEventArgs misargs = new CambioSeleccionEventArgs(eleccionSelect);
+                CambioSeleccionEleccionEventArgs misargs = new CambioSeleccionEleccionEventArgs(eleccionSelect);
                 OnCambioSeleccion(misargs);
                 listaResultados = eleccionSelect.Results;
                 tablaResultados.ItemsSource = listaResultados;
