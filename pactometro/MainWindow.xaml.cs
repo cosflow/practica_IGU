@@ -20,7 +20,7 @@ namespace pactometro
     public partial class MainWindow : Window
     {
         CDTablas cdTablas = null;
-        
+        CDPactómetro cdpactometro = null;
 
         Eleccion eleccionSeleccionada = null;
         ObservableCollection<Eleccion> elecciones;
@@ -523,58 +523,69 @@ namespace pactometro
 
                 Canvas.SetTop(rect,p.Y);
                 lienzo.Children.Add(rect);
-                return;
+
+                Label etiqueta = new Label();
+                etiqueta.Content = aux.Partido + " - " + aux.Escaños;
+                etiqueta.FontSize = 10;
+                etiqueta.Foreground = Brushes.Black;
+                Canvas.SetLeft(etiqueta, p.X + rect.Width / 2);
+                Canvas.SetTop(etiqueta, p.Y - rect.Height);
+                lienzo.Children.Add(etiqueta);
+
             }
 
-            generarLíneaMayoría(e);
-
-            Point[] puntos = new Point[resultados.Count];
-            Point inicioMayoría = new Point();
-            Point inicioMont = new Point();
-
-            inicioMayoría.X = lienzo.ActualWidth / 3;
-            inicioMayoría.Y = (lienzo.ActualHeight - lienzo.Margin.Top);
-
-            inicioMont.X = lienzo.ActualWidth * 2 / 3;
-            inicioMont.Y = inicioMayoría.Y;
-
-            Resultado[] arrayR = resultados.ToArray();
-            double altura_anterior = 0;
-
-            for (int i = 0; i < resultados.Count; i++)
+            else
             {
-                if (i == 0)
+                generarLíneaMayoría(e);
+
+                Point[] puntos = new Point[resultados.Count];
+                Point inicioMayoría = new Point();
+                Point inicioMont = new Point();
+
+                inicioMayoría.X = lienzo.ActualWidth / 3;
+                inicioMayoría.Y = (lienzo.ActualHeight - lienzo.Margin.Top);
+
+                inicioMont.X = lienzo.ActualWidth * 2 / 3;
+                inicioMont.Y = inicioMayoría.Y;
+
+                Resultado[] arrayR = resultados.ToArray();
+                double altura_anterior = 0;
+
+                for (int i = 0; i < resultados.Count; i++)
                 {
-                    puntos[i] = inicioMont;
-                }
-                else
-                {
-                    puntos[i].X = puntos[i - 1].X;
-                    puntos[i].Y = puntos[i - 1].Y - altura_anterior;
-                }
+                    if (i == 0)
+                    {
+                        puntos[i] = inicioMont;
+                    }
+                    else
+                    {
+                        puntos[i].X = puntos[i - 1].X;
+                        puntos[i].Y = puntos[i - 1].Y - altura_anterior;
+                    }
 
-                Rectangle rect = new Rectangle();
-                rect.Width = lienzo.ActualWidth/5;
-                rect.Height = arrayR[i].Altura;
-                rect.RenderTransform = rotar180;
-                SolidColorBrush brocha = new SolidColorBrush(getColor(arrayR[i].Partido));
-                rect.Fill = brocha;
+                    Rectangle rect = new Rectangle();
+                    rect.Width = lienzo.ActualWidth / 5;
+                    rect.Height = arrayR[i].Altura;
+                    rect.RenderTransform = rotar180;
+                    SolidColorBrush brocha = new SolidColorBrush(getColor(arrayR[i].Partido));
+                    rect.Fill = brocha;
 
-                Canvas.SetLeft(rect, puntos[i].X - rect.Width/2);
-                Canvas.SetTop(rect, puntos[i].Y);
+                    Canvas.SetLeft(rect, puntos[i].X - rect.Width / 2);
+                    Canvas.SetTop(rect, puntos[i].Y);
 
-                lienzo.Children.Add(rect);
-                altura_anterior = rect.Height;
+                    lienzo.Children.Add(rect);
+                    altura_anterior = rect.Height;
 
-                if (arrayR[i].Escaños > 3)
-                {
-                    Label etiqueta = new Label();
-                    etiqueta.Content = arrayR[i].Partido + " - " + arrayR[i].Escaños;
-                    etiqueta.FontSize = 10;
-                    etiqueta.Foreground = Brushes.Black;
-                    Canvas.SetLeft(etiqueta, puntos[i].X + rect.Width/2);
-                    Canvas.SetTop(etiqueta, puntos[i].Y - rect.Height);
-                    lienzo.Children.Add(etiqueta);
+                    if (arrayR[i].Escaños > 3)
+                    {
+                        Label etiqueta = new Label();
+                        etiqueta.Content = arrayR[i].Partido + " - " + arrayR[i].Escaños;
+                        etiqueta.FontSize = 10;
+                        etiqueta.Foreground = Brushes.Black;
+                        Canvas.SetLeft(etiqueta, puntos[i].X + rect.Width / 2);
+                        Canvas.SetTop(etiqueta, puntos[i].Y - rect.Height);
+                        lienzo.Children.Add(etiqueta);
+                    }
                 }
             }
         }

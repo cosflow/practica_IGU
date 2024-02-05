@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,11 +18,18 @@ namespace pactometro
     /// <summary>
     /// Lógica de interacción para Window1.xaml
     /// </summary>
-    public partial class Window1 : Window
+    public partial class CDPactómetro : Window
     {
-        public Window1()
+
+        Eleccion eleccionSeleccionada;
+        List<Resultado> resultadosAñadidos;
+        public CDPactómetro(Eleccion e)
         {
             InitializeComponent();
-        }
+            eleccionSeleccionada = e;
+            tablaResultados.ItemsSource = eleccionSeleccionada.Results;
+            tablaResultadosAñadidos.ItemsSource = resultadosAñadidos;
+            nombreElección.Text = e.Título;
+        } 
     }
 }

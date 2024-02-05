@@ -1,12 +1,46 @@
-﻿<Window x:Class="pactometro.Window1"
+﻿<Window x:Class="pactometro.CDPactómetro"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:pactometro"
         mc:Ignorable="d"
-        Title="Window1" Height="450" Width="800">
+        Title="CDPactómetro" Height="450" Width="800">
     <Grid>
-        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <TextBlock x:Name="nombreElección" Grid.Row="0" HorizontalAlignment="Center"/>
+        <StackPanel Orientation="Vertical" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Button x:Name="btn_AñadirResultado" Content="Añadir Resultado" Padding="2" Margin="5" IsEnabled="False"/>
+            <TextBlock x:Name="resultadosAñadidos_Title" Grid.Row="2" Text="Resultados añadidos:" VerticalAlignment="Center"/>
+        </StackPanel>
+        <Button x:Name="btn_EliminarResultado" Content="Borrar Resultado" Padding="2" Margin="5" IsEnabled="False" Grid.Row="4"/>
+        <ListView Name="tablaResultados" Margin="10"  Grid.Row="1" >
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="PARTIDO" Width="Auto" DisplayMemberBinding="{Binding Partido}" />
+                    <GridViewColumn Header="Escaños" Width="Auto" DisplayMemberBinding="{Binding Escaños}" />
+                </GridView>
+            </ListView.View>
+        </ListView>
+        <ListView Name="tablaResultadosAñadidos" Margin="10"  Grid.Row="3"  Grid.Column="0">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="PARTIDO" Width="Auto" DisplayMemberBinding="{Binding Partido}" />
+                    <GridViewColumn Header="Escaños" Width="Auto" DisplayMemberBinding="{Binding Escaños}" />
+                </GridView>
+            </ListView.View>
+        </ListView>
+        <TextBlock x:Name="txt_Mayoría" Grid.Column="1" Grid.Row="1" FontSize="20" TextWrapping="Wrap"/>
+        <TextBlock x:Name="txt_ResultadosRestantes" Grid.Column="1" Grid.Row="3" FontSize="20" TextWrapping="Wrap"/>
     </Grid>
 </Window>
