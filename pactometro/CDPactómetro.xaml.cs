@@ -33,24 +33,22 @@ namespace pactometro
     public partial class CDPactómetro : Window
     {
         Resultado rSeleccionado = null;
+        int mayoría;
         ObservableCollection<Resultado> resultados;
         ObservableCollection<Resultado> resultadosAñadidos;
-        int mayoría;
         public event EventHandler<CambioSeleccionResultadoEventArgs> CambioSeleccion;
-        public CDPactómetro(Eleccion e)
+        public CDPactómetro(ObservableCollection<Resultado> resultadosEleccion, ObservableCollection<Resultado> resultadosFormados, int m)
         {
             InitializeComponent();
             resultados = new ObservableCollection<Resultado>();
-            foreach(Resultado r in e.Results)
+            foreach(Resultado r in resultadosEleccion)
             {
                 resultados.Add(r);
             }
-
+            mayoría = m;
             tablaResultados.ItemsSource = resultados;
-            resultadosAñadidos = new ObservableCollection<Resultado>();
+            resultadosAñadidos = resultadosFormados;
             tablaResultadosAñadidos.ItemsSource = resultadosAñadidos;
-            nombreElección.Text = e.Título;
-            mayoría = e.Mayoría;
             txt_Mayoría.Text += mayoría;
             txt_ResultadosRestantes.Text += mayoría;
         }
