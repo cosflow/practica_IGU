@@ -22,17 +22,16 @@ namespace pactometro
         CDTablas cdTablas = null;
         Eleccion eleccionSeleccionada = null;
         ObservableCollection<Eleccion> elecciones;
-        int modo;
+        int modo = 0;
         public MainWindow()
         {
             InitializeComponent();
             elecciones = new ObservableCollection<Eleccion>();
             DatosElecciones datos = new DatosElecciones(elecciones);
         }
-
         private void visualizarResultados(Eleccion e)
         {
-            
+
             if (e != null)
             {
                 switch (e.Tipo)
@@ -42,6 +41,18 @@ namespace pactometro
                         break;
                     default:
                         tituloEleccion.Text = e.Tipo+" " +e.Parlamento + " " + e.Fecha;
+                        break;
+                }
+                switch (modo)
+                {
+                    case 0:
+                        tituloEleccion.Text += "\nVista: Normal";
+                        break;
+                    case 1:
+                        tituloEleccion.Text += "\nVista: Histórico";
+                        break;
+                    case 2:
+                        tituloEleccion.Text += "\nVista: Pactómetro";
                         break;
                 }
                 tituloEleccion.FontSize = 20;
@@ -142,7 +153,6 @@ namespace pactometro
                 }
             }
         }
-
         private void generarEjes(int maxResult,Rectangle rect)
         {
             int division = maxResult/6;
@@ -177,20 +187,58 @@ namespace pactometro
                 maxResult -= division;
             }
         }
+        private void generarLíneaMayoría(Eleccion e)
+        {
+            int m = e.Mayoría;
+            double alturaMax = (lienzo.ActualHeight - lienzo.Margin.Top) * .9;
 
+            int total = 0;
+            foreach(Resultado r in e.Results)
+            {
+                total += r.Escaños;
+            }
+
+            double alturaMayoría = m*alturaMax/total;
+
+            Rectangle linea_Mayor = new Rectangle();
+            SolidColorBrush pincel = new SolidColorBrush();
+            pincel.Color = Colors.Black;
+            linea_Mayor.Fill = pincel;
+
+            linea_Mayor.Width = lienzo.ActualWidth;
+            linea_Mayor.Height = 0.85;
+
+            Canvas.SetLeft(linea_Mayor, 0);
+            Canvas.SetTop(linea_Mayor, alturaMayoría);
+
+            lienzo.Children.Add(linea_Mayor);
+        }
         private List<Resultado> obtenerAlturasPorcentuales(Eleccion e)
         {
             if (e == null) return null;
             List<Resultado> resultados = e.Results;
+            double alturaMax = (lienzo.ActualHeight - lienzo.Margin.Top)*.9;
+            double mayor = 0;
 
             if (modo == 2)
             {
-                Resultado mayoría = new Resultado("Mayoría", e.Mayoría);
-                resultados.Add(mayoría);
-            }
+                int total = 0;
+                foreach(Resultado r in resultados)
+                {
+                    total += r.Escaños;
+                }
 
-            double alturaMax = (lienzo.ActualHeight - lienzo.Margin.Top)*.9;
-            double mayor = 0;
+                foreach (Resultado r in resultados)
+                {
+                    r.Altura = r.Escaños * alturaMax / total;
+                    if (r.Altura <= 0)
+                    {
+                        return null;
+                    }
+                }
+
+                return resultados;
+            }
 
             foreach (Resultado r in resultados)
             {
@@ -275,17 +323,17 @@ namespace pactometro
         {
             cdTablas = null; 
         }
-
         private void Cdsec_CambioSeleccion(object sender, CambioSeleccionEventArgs e)
         {
             lienzo.Children.Clear();
             eleccionSeleccionada = e.eleccionSeleccionada;
             if(modo == 0) visualizarResultados(eleccionSeleccionada);
             if (modo == 1) obtenerHistorico(eleccionSeleccionada);
+            if (modo == 2) visualizarResultadosPactómetro(eleccionSeleccionada);
         }
-
         private void Historico_MenuItem_Click(object sender, RoutedEventArgs e)
         {
+            modo = 1;
             if (eleccionSeleccionada != null)
             {
                 obtenerHistorico(eleccionSeleccionada);
@@ -295,7 +343,6 @@ namespace pactometro
                 MessageBox.Show("ERROR\nSeleccione una elección en la ventana de Opciones->Registro, por favor");
             }
         }
-
         private void obtenerHistorico(Eleccion eleccion)
         {
             if(eleccion == null)
@@ -398,30 +445,27 @@ namespace pactometro
                 lienzo.Children.Add(fecha);
             }
         }
-
         private void Normal_MenuItem_Click(object sender, EventArgs e)
         {
+            modo = 0;
             if (eleccionSeleccionada != null)
             {
                 lienzo.Children.Clear();
                 visualizarResultados(eleccionSeleccionada);
-                modo = 0;
             }
             else MessageBox.Show("ERROR\nSeleccione una elección en la ventana de  Opciones->Registro, por favor");
         }
-
         private void Pactómetro_MenuItem_Click(object sender, EventArgs e) 
         {
+            modo = 2;
             if(eleccionSeleccionada == null)
             {
                 MessageBox.Show("ERROR\nSeleccione una elección en la ventana de  Opciones->Registro, por favor");
                 return;
             }
             lienzo.Children.Clear();
-            modo = 2;
             visualizarResultadosPactómetro(eleccionSeleccionada);
         }
-
         private void visualizarResultadosPactómetro(Eleccion e)
         {
             if (e == null) return;
@@ -437,35 +481,13 @@ namespace pactometro
             }
             tituloEleccion.FontSize = 20;
 
-            int col = 2;
             bool hayMayoría = false;
             List<Resultado> resultados = obtenerAlturasPorcentuales(e);
-            ScaleTransform scaleTransform = new ScaleTransform(1, -1);
+            ScaleTransform rotar180 = new ScaleTransform(1, -1);
 
             if (resultados == null) return;
 
-            Rectangle linea_Mayor = new Rectangle();
-            SolidColorBrush pincel = new SolidColorBrush();
-            pincel.Color = Colors.Black;
-            linea_Mayor.Width = lienzo.ActualWidth;
-            linea_Mayor.Height = 1;
-            linea_Mayor.Fill = pincel;
-            Canvas.SetLeft(linea_Mayor, 0);
-            lienzo.Children.Add(linea_Mayor);
-            double alturaM = 0;
             Resultado aux = null;
-            foreach (Resultado r in resultados)
-            {
-                if (r.Partido.Equals("Mayoría"))
-                {
-                    aux = r;
-                    alturaM = r.Altura;
-                    break;
-                }
-            }
-            if(aux != null) resultados.Remove(aux);
-            Canvas.SetBottom(linea_Mayor, alturaM);
-
 
             foreach (Resultado r in resultados)
             {
@@ -480,22 +502,74 @@ namespace pactometro
             if (hayMayoría)
             {
                 Rectangle rect = new Rectangle();
-                Point p = new Point();
-                p.X = lienzo.ActualWidth / 4;
-                p.Y = (lienzo.ActualHeight - lienzo.Margin.Top);
+                
                 SolidColorBrush brocha = new SolidColorBrush(getColor(aux.Partido));
-                rect.RenderTransform = scaleTransform;
+                rect.RenderTransform = rotar180;
                 rect.Fill = brocha;
                 rect.Width = lienzo.ActualWidth/3;
                 rect.Height = aux.Altura;
+
+                Point p = new Point();
+                p.X = lienzo.ActualWidth/2 - rect.Width/2;
+                p.Y = (lienzo.ActualHeight - lienzo.Margin.Top);
                 Canvas.SetLeft(rect, p.X);
+
                 Canvas.SetTop(rect,p.Y);
                 lienzo.Children.Add(rect);
                 return;
             }
 
-            Point[] puntos = new Point[e.Results.Count];
+            generarLíneaMayoría(e);
 
+            Point[] puntos = new Point[resultados.Count];
+            Point inicioMayoría = new Point();
+            Point inicioMont = new Point();
+
+            inicioMayoría.X = lienzo.ActualWidth / 3;
+            inicioMayoría.Y = (lienzo.ActualHeight - lienzo.Margin.Top);
+
+            inicioMont.X = lienzo.ActualWidth * 2 / 3;
+            inicioMont.Y = inicioMayoría.Y;
+
+            Resultado[] arrayR = resultados.ToArray();
+            double altura_anterior = 0;
+
+            for (int i = 0; i < resultados.Count; i++)
+            {
+                if (i == 0)
+                {
+                    puntos[i] = inicioMont;
+                }
+                else
+                {
+                    puntos[i].X = puntos[i - 1].X;
+                    puntos[i].Y = puntos[i - 1].Y - altura_anterior;
+                }
+
+                Rectangle rect = new Rectangle();
+                rect.Width = lienzo.ActualWidth/5;
+                rect.Height = arrayR[i].Altura;
+                rect.RenderTransform = rotar180;
+                SolidColorBrush brocha = new SolidColorBrush(getColor(arrayR[i].Partido));
+                rect.Fill = brocha;
+
+                Canvas.SetLeft(rect, puntos[i].X - rect.Width/2);
+                Canvas.SetTop(rect, puntos[i].Y);
+
+                lienzo.Children.Add(rect);
+                altura_anterior = rect.Height;
+
+                if (arrayR[i].Escaños > 3)
+                {
+                    Label etiqueta = new Label();
+                    etiqueta.Content = arrayR[i].Partido + " - " + arrayR[i].Escaños;
+                    etiqueta.FontSize = 10;
+                    etiqueta.Foreground = Brushes.Black;
+                    Canvas.SetLeft(etiqueta, puntos[i].X+rect.Width/2);
+                    Canvas.SetTop(etiqueta, puntos[i].Y - rect.Height);
+                    lienzo.Children.Add(etiqueta);
+                }
+            }
         }
         private void Eleccion_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
@@ -510,6 +584,10 @@ namespace pactometro
                     break;
                 case "Parlamento":
                     break;
+            }
+            if (eleccion == eleccionSeleccionada && eleccionSeleccionada != null)
+            {
+                visualizarResultados(eleccionSeleccionada);
             }
         }
     }
