@@ -15,11 +15,11 @@ using System.Windows.Shapes;
 namespace pactometro
 {
     /// <summary>
-    /// Lógica de interacción para Pactómetro.xaml
+    /// Lógica de interacción para Window1.xaml
     /// </summary>
-    public partial class Pactómetro : Window
+    public partial class Window1 : Window
     {
-        public Pactómetro()
+        public Window1()
         {
             InitializeComponent();
         }

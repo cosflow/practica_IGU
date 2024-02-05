@@ -58,6 +58,9 @@
     <Compile Include="CDTablas.xaml.cs">
       <DependentUpon>CDTablas.xaml</DependentUpon>
     </Compile>
+    <Compile Include="CDPactómetro.xaml.cs">
+      <DependentUpon>CDPactómetro.xaml</DependentUpon>
+    </Compile>
     <Page Include="CRUD_Elecciones.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -74,9 +77,6 @@
       <DependentUpon>CRUD_Elecciones.xaml</DependentUpon>
     </Compile>
     <Compile Include="DatosElecciones.cs" />
-    <Compile Include="Pactómetro.xaml.cs">
-      <DependentUpon>Pactómetro.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Resultado.cs" />
     <Compile Include="Eleccion.cs" />
     <Compile Include="MainWindow.xaml.cs">
@@ -87,7 +87,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Pactómetro.xaml">
+    <Page Include="CDPactómetro.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
