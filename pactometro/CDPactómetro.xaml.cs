@@ -49,7 +49,6 @@ namespace pactometro
         {
             if (CambioSeleccion != null) CambioSeleccion(this, r);
         }
-
         private void tablaResultados_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             Resultado resultadoSelect = (Resultado)tablaResultados.SelectedItem;
@@ -80,7 +79,6 @@ namespace pactometro
                 btn_EliminarResultado.IsEnabled = false;
             }
         }
-
         private void btn_AñadirResultado_Click(object sender, RoutedEventArgs e)
         {
             if(rSeleccionado != null)
@@ -106,7 +104,6 @@ namespace pactometro
                 else MessageBox.Show("ERROR. Resultado ya añadido!");
             }
         }
-
         private void btn_EliminarResultado_Click(object sender, RoutedEventArgs e)
         {
             if(rSeleccionado != null)

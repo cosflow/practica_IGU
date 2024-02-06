@@ -160,15 +160,15 @@ namespace pactometro
                     
                     if (i == indice)
                     {
-                        generarEjes(e.Results[i].Escaños,rect);
+                        generarEjes(e.Results[i].Escaños,rect.Height);
                     }
                 }
             }
         }
-        private void generarEjes(int maxResult,Rectangle rect)
+        private void generarEjes(int maxResult,double altRect)
         {
             int division = maxResult/6;
-            double conversion = rect.Height/ (double) maxResult;
+            double conversion = altRect/ (double) maxResult;
 
             int alturaMax = 1;
 
@@ -199,32 +199,6 @@ namespace pactometro
                 maxResult -= division;
             }
         }
-        private void generarLíneaMayoría(Eleccion e)
-        {
-            int m = e.Mayoría;
-            double alturaMax = (lienzo.ActualHeight - lienzo.Margin.Top) * .9;
-
-            int total = 0;
-            foreach(Resultado r in e.Results)
-            {
-                total += r.Escaños;
-            }
-
-            double alturaMayoría = m*alturaMax/total;
-
-            Rectangle linea_Mayor = new Rectangle();
-            SolidColorBrush pincel = new SolidColorBrush();
-            pincel.Color = Colors.Black;
-            linea_Mayor.Fill = pincel;
-
-            linea_Mayor.Width = lienzo.ActualWidth;
-            linea_Mayor.Height = 0.85;
-
-            Canvas.SetLeft(linea_Mayor, 0);
-            Canvas.SetTop(linea_Mayor, alturaMayoría);
-
-            lienzo.Children.Add(linea_Mayor);
-        }
         private int setAlturasPorcentuales(Eleccion e)
         {
             if (e == null) return -1;
@@ -234,22 +208,51 @@ namespace pactometro
 
             if (modo == 2)
             {
-                int total = 0;
-                foreach(Resultado r in resultados)
-                {
-                    total += r.Escaños;
-                }
+                int totalC = 0, totalA = 0, total;
 
-                foreach (Resultado r in resultados)
+                if(copiaResultados != null && copiaResultados.Count > 0)
                 {
-                    r.Altura = r.Escaños * alturaMax / total;
-                    if (r.Altura <= 0)
+                    foreach(Resultado r in copiaResultados)
                     {
-                        return -1;
+                        totalC += r.Escaños;
+                    }
+
+                }
+                if (resultadosAñadidos != null && resultadosAñadidos.Count > 0)
+                {
+                    foreach (Resultado r in resultadosAñadidos)
+                    {
+                        totalA += r.Escaños;
+                    }
+
+                }
+                if (totalA > totalC) total = totalA; else total = totalC;
+
+                if (resultadosAñadidos.Count > 0 && resultadosAñadidos!=null )
+                {
+                    foreach(Resultado r in resultadosAñadidos)
+                    {
+                        r.Altura = alturaMax * r.Escaños / total;
+                        if(r.Altura < 0)
+                        {
+                            return -1;
+                        }
+                    }
+
+                }
+                if(copiaResultados.Count > 0 && copiaResultados != null)
+                {
+                    foreach(Resultado r in copiaResultados )
+                    {
+                        r.Altura = alturaMax * r.Escaños / total;
+                        if(r.Altura < 0)
+                        {
+                            return -1;
+                        }
                     }
                 }
 
-                return 0;
+                return total;
             }
 
             foreach (Resultado r in resultados)
@@ -301,47 +304,6 @@ namespace pactometro
 
                     return Color.FromRgb(r,g,b);
             }
-        }
-        private void lienzo_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            if (eleccionSeleccionada != null)
-            {
-                lienzo.Children.Clear();
-                if(modo == 0)
-                {
-                    visualizarResultados(eleccionSeleccionada);
-                }
-                if(modo == 1)
-                {
-                    obtenerHistorico(eleccionSeleccionada);
-                }
-                if(modo == 2)
-                {
-                    visualizarResultadosPactómetro(eleccionSeleccionada);
-                }
-            }
-        }
-        private void Conf_MenuItem_Click(object sender, RoutedEventArgs e)
-        {
-            if (cdTablas == null)
-            {
-                cdTablas = new CDTablas(elecciones);
-                cdTablas.Closed += cdTablas_Closed;
-                cdTablas.CambioSeleccion += Cdsec_CambioSeleccion;
-            }
-            cdTablas.Show();
-        }
-        void cdTablas_Closed(object sender, EventArgs e)
-        {
-            cdTablas = null; 
-        }
-        private void Cdsec_CambioSeleccion(object sender, CambioSeleccionEleccionEventArgs e)
-        {
-            lienzo.Children.Clear();
-            eleccionSeleccionada = e.eleccionSeleccionada;
-            if(modo == 0) visualizarResultados(eleccionSeleccionada);
-            if (modo == 1) obtenerHistorico(eleccionSeleccionada);
-            if (modo == 2) visualizarResultadosPactómetro(eleccionSeleccionada);
         }
         private void Historico_MenuItem_Click(object sender, RoutedEventArgs e)
         {
@@ -459,35 +421,6 @@ namespace pactometro
                 lienzo.Children.Add(fecha);
             }
         }
-        private void Normal_MenuItem_Click(object sender, EventArgs e)
-        {
-            modo = 0;
-            btn_GestionarPactos.IsEnabled = false;
-
-            if (eleccionSeleccionada != null)
-            {
-                lienzo.Children.Clear();
-                visualizarResultados(eleccionSeleccionada);
-            }
-            else MessageBox.Show("ERROR\nSeleccione una elección en la ventana de  Opciones->Registro, por favor");
-        }
-        private void Pactómetro_MenuItem_Click(object sender, EventArgs e) 
-        {
-            modo = 2;
-            btn_GestionarPactos.IsEnabled = true;
-            if(eleccionSeleccionada == null)
-            {
-                MessageBox.Show("ERROR\nSeleccione una elección en la ventana de  Opciones->Registro, por favor");
-                return;
-            }
-            lienzo.Children.Clear();
-            copiaResultados = new ObservableCollection<Resultado>(eleccionSeleccionada.Results);
-            resultadosAñadidos = new ObservableCollection<Resultado>();
-            copiaResultados.CollectionChanged += CollectionChangedHandler;
-            resultadosAñadidos.CollectionChanged += CollectionChangedHandler;
-            visualizarResultadosPactómetro(eleccionSeleccionada);
-        }
-        
         private void visualizarResultadosPactómetro(Eleccion e)
         {
             lienzo.Children.Clear();
@@ -506,8 +439,9 @@ namespace pactometro
             tituloEleccion.FontSize = 20;
 
             bool hayMayoría = false;
-            setAlturasPorcentuales(e);
-            generarLíneaMayoría(e);
+            int mayor = setAlturasPorcentuales(e);
+            if (mayor < 0) return;
+            if(mayor > 0) generarLíneaMayoría(mayor, e.Mayoría);
             ScaleTransform rotar180 = new ScaleTransform(1, -1);
 
             if (copiaResultados == null) return;
@@ -536,7 +470,7 @@ namespace pactometro
 
                 Point p = new Point();
                 p.X = lienzo.ActualWidth / 2 - rect.Width / 2;
-                p.Y = (lienzo.ActualHeight - lienzo.Margin.Top);
+                p.Y = (lienzo.ActualHeight - lienzo.Margin.Top)*.9;
                 Canvas.SetLeft(rect, p.X);
 
                 Canvas.SetTop(rect, p.Y);
@@ -610,6 +544,21 @@ namespace pactometro
                         lienzo.Children.Add(etiqueta);
                     }
                 }
+                int total = 0;
+                foreach(Resultado r in copiaResultados)
+                {
+                    total += r.Escaños;
+                }
+
+                Label etiquetaTotalMont = new Label();
+                etiquetaTotalMont.Content = total;
+                etiquetaTotalMont.FontSize = 10;
+                etiquetaTotalMont.Foreground = Brushes.Black;
+
+                Canvas.SetLeft(etiquetaTotalMont, inicioMont.X);
+                Canvas.SetTop(etiquetaTotalMont, inicioMont.Y);
+
+                lienzo.Children.Add(etiquetaTotalMont);
             }
             if (resultadosAñadidos.Count > 0)
             {
@@ -651,7 +600,125 @@ namespace pactometro
                         lienzo.Children.Add(etiqueta);
                     }
                 }
+                int total = 0;
+                foreach (Resultado r in resultadosAñadidos)
+                {
+                    total += r.Escaños;
+                }
+
+                Label etiquetaTotalMay = new Label();
+                etiquetaTotalMay.Content = total;
+                etiquetaTotalMay.FontSize = 10;
+                etiquetaTotalMay.Foreground = Brushes.Black;
+
+                Canvas.SetLeft(etiquetaTotalMay, inicioMayoría.X);
+                Canvas.SetTop(etiquetaTotalMay, inicioMayoría.Y);
+
+                lienzo.Children.Add(etiquetaTotalMay);
             }
+        }
+        private void generarLíneaMayoría(int t, int m)
+        {
+
+            double alturaMax = (lienzo.ActualHeight - lienzo.Margin.Top);
+
+            int total = t;
+
+
+            double alturaMayoría = m*alturaMax/total;
+
+            if (m > t)
+            {
+                alturaMayoría = alturaMax;
+            }
+            Rectangle linea_Mayor = new Rectangle();
+            SolidColorBrush pincel = new SolidColorBrush();
+            pincel.Color = Colors.Black;
+            linea_Mayor.Fill = pincel;
+
+            linea_Mayor.Width = lienzo.ActualWidth;
+            linea_Mayor.Height = 0.85;
+
+            Canvas.SetLeft(linea_Mayor, 0);
+            Canvas.SetTop(linea_Mayor, alturaMax - alturaMayoría);
+
+            lienzo.Children.Add(linea_Mayor);
+
+            Label etiquetaMay = new Label();
+            etiquetaMay.Content = "Mayoría = "+m;
+            etiquetaMay.FontSize = 10;
+            etiquetaMay.Foreground = Brushes.Red;
+
+            Canvas.SetRight(etiquetaMay, 0);
+            Canvas.SetTop(etiquetaMay, alturaMax-alturaMayoría-5);
+
+            lienzo.Children.Add(etiquetaMay);
+        }
+        private void lienzo_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (eleccionSeleccionada != null)
+            {
+                lienzo.Children.Clear();
+                if(modo == 0)
+                {
+                    visualizarResultados(eleccionSeleccionada);
+                }
+                if(modo == 1)
+                {
+                    obtenerHistorico(eleccionSeleccionada);
+                }
+                if(modo == 2)
+                {
+                    visualizarResultadosPactómetro(eleccionSeleccionada);
+                }
+            }
+        }
+        private void Normal_MenuItem_Click(object sender, EventArgs e)
+        {
+            modo = 0;
+            btn_GestionarPactos.IsEnabled = false;
+
+            if (eleccionSeleccionada != null)
+            {
+                lienzo.Children.Clear();
+                visualizarResultados(eleccionSeleccionada);
+            }
+            else MessageBox.Show("ERROR\nSeleccione una elección en la ventana de  Opciones->Registro, por favor");
+        }
+        private void Conf_MenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            if (cdTablas == null)
+            {
+                cdTablas = new CDTablas(elecciones);
+                cdTablas.Closed += cdTablas_Closed;
+                cdTablas.CambioSeleccion += Cdsec_CambioSeleccion;
+            }
+            cdTablas.Show();
+        }
+        private void Pactómetro_MenuItem_Click(object sender, EventArgs e) 
+        {
+            modo = 2;
+            btn_GestionarPactos.IsEnabled = true;
+            if(eleccionSeleccionada == null)
+            {
+                MessageBox.Show("ERROR\nSeleccione una elección en la ventana de  Opciones->Registro, por favor");
+                return;
+            }
+            lienzo.Children.Clear();
+            copiaResultados = new ObservableCollection<Resultado>(eleccionSeleccionada.Results);
+            resultadosAñadidos = new ObservableCollection<Resultado>();
+            copiaResultados.CollectionChanged += CollectionChangedHandler;
+            resultadosAñadidos.CollectionChanged += CollectionChangedHandler;
+            visualizarResultadosPactómetro(eleccionSeleccionada);
+        }
+        private void btn_GestionarPactos_Click(object sender, RoutedEventArgs e)
+        {
+            if (cdPactometro == null)
+            {
+                cdPactometro = new CDPactómetro(copiaResultados, resultadosAñadidos, eleccionSeleccionada.Mayoría);
+                cdPactometro.Closed += cdPactómetro_Closed;
+            }
+            cdPactometro.Show();
         }
         private void CollectionChangedHandler(object sender, NotifyCollectionChangedEventArgs e)
         {
@@ -731,14 +798,17 @@ namespace pactometro
                 visualizarResultados(eleccionSeleccionada);
             }
         }
-        private void btn_GestionarPactos_Click(object sender, RoutedEventArgs e)
+        void cdTablas_Closed(object sender, EventArgs e)
         {
-            if (cdPactometro == null)
-            {
-                cdPactometro = new CDPactómetro(copiaResultados, resultadosAñadidos, eleccionSeleccionada.Mayoría);
-                cdPactometro.Closed += cdPactómetro_Closed;
-            }
-            cdPactometro.Show();
+            cdTablas = null; 
+        }
+        private void Cdsec_CambioSeleccion(object sender, CambioSeleccionEleccionEventArgs e)
+        {
+            lienzo.Children.Clear();
+            eleccionSeleccionada = e.eleccionSeleccionada;
+            if(modo == 0) visualizarResultados(eleccionSeleccionada);
+            if (modo == 1) obtenerHistorico(eleccionSeleccionada);
+            if (modo == 2) visualizarResultadosPactómetro(eleccionSeleccionada);
         }
         void cdPactómetro_Closed(object sender, EventArgs e)
         {
