@@ -15,11 +15,7 @@ using System.Windows.Shapes;
 
 namespace pactometro
 {
-    /// <summary>
-    /// Lógica de interacción para Window1.xaml
-    /// </summary>
-    /// 
-
+    
     public class CambioSeleccionResultadoEventArgs : EventArgs
     {
         public Resultado resultadoSeleccionado { get; set; }
@@ -29,6 +25,7 @@ namespace pactometro
             resultadoSeleccionado = r;
         }
     }
+
     
     public partial class CDPactómetro : Window
     {
@@ -40,11 +37,7 @@ namespace pactometro
         public CDPactómetro(ObservableCollection<Resultado> resultadosEleccion, ObservableCollection<Resultado> resultadosFormados, int m)
         {
             InitializeComponent();
-            resultados = new ObservableCollection<Resultado>();
-            foreach(Resultado r in resultadosEleccion)
-            {
-                resultados.Add(r);
-            }
+            resultados = resultadosEleccion;
             mayoría = m;
             tablaResultados.ItemsSource = resultados;
             resultadosAñadidos = resultadosFormados;

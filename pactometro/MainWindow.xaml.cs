@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -21,15 +23,24 @@ namespace pactometro
     {
         CDTablas cdTablas = null;
         CDPactómetro cdPactometro = null;
+        public event EventHandler<CollectionChangedEventManager> CambioColeccion;
 
         Eleccion eleccionSeleccionada = null;
         ObservableCollection<Eleccion> elecciones;
+
+        ObservableCollection<Resultado> copiaResultados = null;
+        ObservableCollection<Resultado> resultadosAñadidos = null;
+
+
         int modo = 0;
         public MainWindow()
         {
             InitializeComponent();
             elecciones = new ObservableCollection<Eleccion>();
+
             DatosElecciones datos = new DatosElecciones(elecciones);
+            elecciones.CollectionChanged += CollectionChangedHandler;
+            
         }
         private void visualizarResultados(Eleccion e)
         {
@@ -58,11 +69,10 @@ namespace pactometro
                         break;
                 }
                 tituloEleccion.FontSize = 20;
-                ObservableCollection<Resultado> resultados = obtenerAlturasPorcentuales(e);
+                if (setAlturasPorcentuales(e) == -1 ) return;
 
-                if (resultados == null) return;
 
-                int tam = resultados.Count;
+                int tam = e.Results.Count;
                 double inicio = lienzo.ActualWidth/10;
                 double ancho = (lienzo.ActualWidth -inicio)/(tam* 3);
 
@@ -71,7 +81,7 @@ namespace pactometro
                 double mayor = 0;
                 int indice = 0;
                 int j = 0;
-                foreach (Resultado r in resultados)
+                foreach (Resultado r in e.Results)
                 {
                     if (r.Altura > mayor)
                     {
@@ -83,7 +93,7 @@ namespace pactometro
 
                 List<String> repetidos = new List<String>();
                 List<String> fechasRep = new List<String>();
-                Resultado[] rs = resultados.ToArray();
+                Resultado[] rs = e.Results.ToArray();
                 for (int i = 0; i < tam; i++)
                 {
                     if (i == 0)
@@ -105,22 +115,22 @@ namespace pactometro
                     rect.RenderTransform = rotar180;
                     if (repetidos.Count == 0)
                     {
-                        part.Text = resultados[i].Partido;
+                        part.Text = e.Results[i].Partido;
                         Canvas.SetLeft(part, puntos[i].X);
                         Canvas.SetTop(part, puntos[i].Y);
                         lienzo.Children.Add(part);
-                        repetidos.Add(resultados[i].Partido);
+                        repetidos.Add(e.Results[i].Partido);
                     }
                     else
                     {
-                        if (!repetidos.Contains(resultados[i].partido))
+                        if (!repetidos.Contains(e.Results[i].partido))
                         {
                             numReps = 0;
-                            part.Text = resultados[i].Partido;
+                            part.Text = e.Results[i].Partido;
                             Canvas.SetLeft(part, puntos[i].X);
                             Canvas.SetTop(part, puntos[i].Y);
                             lienzo.Children.Add(part);
-                            repetidos.Add(resultados[i].Partido);
+                            repetidos.Add(e.Results[i].Partido);
                         }
                         else
                         {
@@ -135,12 +145,12 @@ namespace pactometro
                     if (numReps == 0)
                     {
 
-                        SolidColorBrush pincel = new SolidColorBrush(getColor(resultados[i].Partido));
+                        SolidColorBrush pincel = new SolidColorBrush(getColor(e.Results[i].Partido));
                         rect.Fill = pincel;
                     }
                     else {
 
-                        Color c = getColor(resultados[i].Partido);
+                        Color c = getColor(e.Results[i].Partido);
                         c.A = (byte)(255 - 2*255/elecciones.Count*numReps);
                         SolidColorBrush pincelArgb = new SolidColorBrush(c);
                         rect.Fill = pincelArgb;
@@ -150,7 +160,7 @@ namespace pactometro
                     
                     if (i == indice)
                     {
-                        generarEjes(resultados[i].Escaños,rect);
+                        generarEjes(e.Results[i].Escaños,rect);
                     }
                 }
             }
@@ -215,9 +225,9 @@ namespace pactometro
 
             lienzo.Children.Add(linea_Mayor);
         }
-        private ObservableCollection<Resultado> obtenerAlturasPorcentuales(Eleccion e)
+        private int setAlturasPorcentuales(Eleccion e)
         {
-            if (e == null) return null;
+            if (e == null) return -1;
             ObservableCollection<Resultado> resultados = e.Results;
             double alturaMax = (lienzo.ActualHeight - lienzo.Margin.Top)*.9;
             double mayor = 0;
@@ -235,11 +245,11 @@ namespace pactometro
                     r.Altura = r.Escaños * alturaMax / total;
                     if (r.Altura <= 0)
                     {
-                        return null;
+                        return -1;
                     }
                 }
 
-                return resultados;
+                return 0;
             }
 
             foreach (Resultado r in resultados)
@@ -255,11 +265,11 @@ namespace pactometro
                 r.Altura = r.Escaños * alturaMax / mayor;
                 if (r.Altura <= 0)
                 {
-                    return null;
+                    return -1;
                 }
             }
             
-            return resultados;
+            return 0;
         }
         private Color getColor(String partido)
         {
@@ -471,10 +481,17 @@ namespace pactometro
                 return;
             }
             lienzo.Children.Clear();
+            copiaResultados = new ObservableCollection<Resultado>(eleccionSeleccionada.Results);
+            resultadosAñadidos = new ObservableCollection<Resultado>();
+            copiaResultados.CollectionChanged += CollectionChangedHandler;
+            resultadosAñadidos.CollectionChanged += CollectionChangedHandler;
             visualizarResultadosPactómetro(eleccionSeleccionada);
         }
+        
         private void visualizarResultadosPactómetro(Eleccion e)
         {
+            lienzo.Children.Clear();
+            
             if (e == null) return;
 
             switch (e.Tipo)
@@ -489,14 +506,15 @@ namespace pactometro
             tituloEleccion.FontSize = 20;
 
             bool hayMayoría = false;
-            ObservableCollection<Resultado> resultados = obtenerAlturasPorcentuales(e);
+            setAlturasPorcentuales(e);
+            generarLíneaMayoría(e);
             ScaleTransform rotar180 = new ScaleTransform(1, -1);
 
-            if (resultados == null) return;
+            if (copiaResultados == null) return;
 
             Resultado aux = null;
 
-            foreach (Resultado r in resultados)
+            foreach (Resultado r in copiaResultados)
             {
                 if (r.Escaños >= e.Mayoría)
                 {
@@ -509,19 +527,19 @@ namespace pactometro
             if (hayMayoría)
             {
                 Rectangle rect = new Rectangle();
-                
+
                 SolidColorBrush brocha = new SolidColorBrush(getColor(aux.Partido));
                 rect.RenderTransform = rotar180;
                 rect.Fill = brocha;
-                rect.Width = lienzo.ActualWidth/3;
+                rect.Width = lienzo.ActualWidth / 3;
                 rect.Height = aux.Altura;
 
                 Point p = new Point();
-                p.X = lienzo.ActualWidth/2 - rect.Width/2;
+                p.X = lienzo.ActualWidth / 2 - rect.Width / 2;
                 p.Y = (lienzo.ActualHeight - lienzo.Margin.Top);
                 Canvas.SetLeft(rect, p.X);
 
-                Canvas.SetTop(rect,p.Y);
+                Canvas.SetTop(rect, p.Y);
                 lienzo.Children.Add(rect);
 
                 Label etiqueta = new Label();
@@ -532,35 +550,40 @@ namespace pactometro
                 Canvas.SetTop(etiqueta, p.Y - rect.Height);
                 lienzo.Children.Add(etiqueta);
 
+                btn_GestionarPactos.IsEnabled = false;
+                return;
             }
 
-            else
+            if (copiaResultados == null && resultadosAñadidos == null) return;
+
+
+            Point[] puntosMont = new Point[copiaResultados.Count];
+            Point[] puntosMay = new Point[resultadosAñadidos.Count];
+
+            Point inicioMayoría = new Point();
+            Point inicioMont = new Point();
+
+            inicioMayoría.X = lienzo.ActualWidth / 3;
+            inicioMayoría.Y = (lienzo.ActualHeight - lienzo.Margin.Top);
+
+            inicioMont.X = lienzo.ActualWidth * 2 / 3;
+            inicioMont.Y = inicioMayoría.Y;
+
+
+            if (copiaResultados.Count > 0) 
             {
-                generarLíneaMayoría(e);
-
-                Point[] puntos = new Point[resultados.Count];
-                Point inicioMayoría = new Point();
-                Point inicioMont = new Point();
-
-                inicioMayoría.X = lienzo.ActualWidth / 3;
-                inicioMayoría.Y = (lienzo.ActualHeight - lienzo.Margin.Top);
-
-                inicioMont.X = lienzo.ActualWidth * 2 / 3;
-                inicioMont.Y = inicioMayoría.Y;
-
-                Resultado[] arrayR = resultados.ToArray();
+                Resultado[] arrayR = copiaResultados.ToArray();
                 double altura_anterior = 0;
-
-                for (int i = 0; i < resultados.Count; i++)
+                for (int i = 0; i < copiaResultados.Count; i++)
                 {
                     if (i == 0)
                     {
-                        puntos[i] = inicioMont;
+                        puntosMont[i] = inicioMont;
                     }
                     else
                     {
-                        puntos[i].X = puntos[i - 1].X;
-                        puntos[i].Y = puntos[i - 1].Y - altura_anterior;
+                        puntosMont[i].X = puntosMont[i - 1].X;
+                        puntosMont[i].Y = puntosMont[i - 1].Y - altura_anterior;
                     }
 
                     Rectangle rect = new Rectangle();
@@ -570,8 +593,8 @@ namespace pactometro
                     SolidColorBrush brocha = new SolidColorBrush(getColor(arrayR[i].Partido));
                     rect.Fill = brocha;
 
-                    Canvas.SetLeft(rect, puntos[i].X - rect.Width / 2);
-                    Canvas.SetTop(rect, puntos[i].Y);
+                    Canvas.SetLeft(rect, puntosMont[i].X - rect.Width / 2);
+                    Canvas.SetTop(rect, puntosMont[i].Y);
 
                     lienzo.Children.Add(rect);
                     altura_anterior = rect.Height;
@@ -582,14 +605,114 @@ namespace pactometro
                         etiqueta.Content = arrayR[i].Partido + " - " + arrayR[i].Escaños;
                         etiqueta.FontSize = 10;
                         etiqueta.Foreground = Brushes.Black;
-                        Canvas.SetLeft(etiqueta, puntos[i].X + rect.Width / 2);
-                        Canvas.SetTop(etiqueta, puntos[i].Y - rect.Height);
+                        Canvas.SetLeft(etiqueta, puntosMont[i].X + rect.Width / 2);
+                        Canvas.SetTop(etiqueta, puntosMont[i].Y - rect.Height);
+                        lienzo.Children.Add(etiqueta);
+                    }
+                }
+            }
+            if (resultadosAñadidos.Count > 0)
+            {
+                Resultado[] arrayR = resultadosAñadidos.ToArray();
+                double altura_anterior = 0;
+                for (int i = 0; i < resultadosAñadidos.Count; i++)
+                {
+                    if (i == 0)
+                    {
+                        puntosMay[i] = inicioMayoría;
+                    }
+                    else
+                    {
+                        puntosMay[i].X = puntosMay[i - 1].X;
+                        puntosMay[i].Y = puntosMay[i - 1].Y - altura_anterior;
+                    }
+
+                    Rectangle rect = new Rectangle();
+                    rect.Width = lienzo.ActualWidth / 5;
+                    rect.Height = arrayR[i].Altura;
+                    rect.RenderTransform = rotar180;
+                    SolidColorBrush brocha = new SolidColorBrush(getColor(arrayR[i].Partido));
+                    rect.Fill = brocha;
+
+                    Canvas.SetLeft(rect, puntosMay[i].X - rect.Width / 2);
+                    Canvas.SetTop(rect, puntosMay[i].Y);
+
+                    lienzo.Children.Add(rect);
+                    altura_anterior = rect.Height;
+
+                    if (arrayR[i].Escaños > 3)
+                    {
+                        Label etiqueta = new Label();
+                        etiqueta.Content = arrayR[i].Partido + " - " + arrayR[i].Escaños;
+                        etiqueta.FontSize = 10;
+                        etiqueta.Foreground = Brushes.Black;
+                        Canvas.SetLeft(etiqueta, puntosMay[i].X + rect.Width / 2);
+                        Canvas.SetTop(etiqueta, puntosMay[i].Y - rect.Height);
                         lienzo.Children.Add(etiqueta);
                     }
                 }
             }
         }
-        private void Eleccion_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private void CollectionChangedHandler(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (eleccionSeleccionada == null) return;
+            if (e.Action == NotifyCollectionChangedAction.Add)
+            {
+                switch (modo)
+                {
+                    case 2:
+                        visualizarResultadosPactómetro(eleccionSeleccionada);
+                        break;
+                    default:
+                        break;
+                }
+            }
+            else if (e.Action == NotifyCollectionChangedAction.Remove)
+            {
+                if(eleccionSeleccionada == null) lienzo.Children.Clear();
+                else
+                {
+                    switch(modo)
+                    {
+                        case 0:
+                            visualizarResultados(eleccionSeleccionada);
+                            break;
+                        case 1:
+                            obtenerHistorico(eleccionSeleccionada);
+                            break;
+                        case 2:
+                            visualizarResultadosPactómetro(eleccionSeleccionada);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+            else if (e.Action == NotifyCollectionChangedAction.Replace)
+            {
+                if (eleccionSeleccionada == null) return;
+                lienzo.Children.Clear();
+                switch (modo)
+                {
+                    case 0:
+                        visualizarResultados(eleccionSeleccionada);
+                        break;
+                    case 1:
+                        obtenerHistorico(eleccionSeleccionada);
+                        break;
+                    case 2:
+                        visualizarResultadosPactómetro(eleccionSeleccionada);
+                        break;
+                    default:
+                        break;
+                }
+            }
+            else if (e.Action == NotifyCollectionChangedAction.Reset)
+            {
+                lienzo.Children.Clear();
+            }
+        }
+        private void Eleccion_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)  
         {
             Eleccion eleccion = (Eleccion)sender;
             switch (e.PropertyName)
@@ -612,12 +735,11 @@ namespace pactometro
         {
             if (cdPactometro == null)
             {
-                cdPactometro = new CDPactómetro(eleccionSeleccionada);
+                cdPactometro = new CDPactómetro(copiaResultados, resultadosAñadidos, eleccionSeleccionada.Mayoría);
                 cdPactometro.Closed += cdPactómetro_Closed;
             }
             cdPactometro.Show();
         }
-
         void cdPactómetro_Closed(object sender, EventArgs e)
         {
             cdPactometro = null;
