@@ -34,10 +34,21 @@ namespace pactometro
         {
             InitializeComponent();
             listaElecciones = l;
-            tablaElecciones.Items.Clear();
-            tablaElecciones.ItemsSource = listaElecciones;
+            listaElecciones.CollectionChanged += ListaElecciones_CollectionChanged;
             listaResultados.Clear();
+            tablaElecciones.Items.Clear();
             tablaResultados.Items.Clear();
+            tablaElecciones.ItemsSource = listaElecciones;
+            tablaResultados.ItemsSource = listaResultados;
+        }
+
+        private void ListaElecciones_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            tablaElecciones.ItemsSource = null;
+            tablaResultados.ItemsSource = null;
+            tablaElecciones.Items.Clear();
+            tablaResultados.Items.Clear();
+            tablaElecciones.ItemsSource = listaElecciones;
             tablaResultados.ItemsSource = listaResultados;
         }
 

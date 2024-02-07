@@ -23,14 +23,12 @@ namespace pactometro
     {
         CDTablas cdTablas = null;
         CDPactómetro cdPactometro = null;
-        public event EventHandler<CollectionChangedEventManager> CambioColeccion;
 
         Eleccion eleccionSeleccionada = null;
         ObservableCollection<Eleccion> elecciones;
 
         ObservableCollection<Resultado> copiaResultados = null;
         ObservableCollection<Resultado> resultadosAñadidos = null;
-
 
         int modo = 0;
         public MainWindow()
@@ -633,7 +631,7 @@ namespace pactometro
             etiquetaMay.Foreground = Brushes.Red;
 
             Canvas.SetRight(etiquetaMay, 0);
-            Canvas.SetBottom(etiquetaMay, alturaMayoría-5-linea_Mayor.Height);
+            Canvas.SetBottom(etiquetaMay, alturaMayoría-10-linea_Mayor.Height);
 
             lienzo.Children.Add(etiquetaMay);
         }
@@ -782,20 +780,10 @@ namespace pactometro
         private void Eleccion_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)  
         {
             Eleccion eleccion = (Eleccion)sender;
-            switch (e.PropertyName)
-            {
-                case "Results":
-                    break;
-                case "Tipo":
-                    break;
-                case "Fecha":
-                    break;
-                case "Parlamento":
-                    break;
-            }
+            
             if (eleccion == eleccionSeleccionada && eleccionSeleccionada != null)
             {
-                visualizarResultados(eleccionSeleccionada);
+                visualizarResultados(eleccion);
             }
         }
         void cdTablas_Closed(object sender, EventArgs e)
@@ -825,6 +813,5 @@ namespace pactometro
         {
             cdPactometro = null;
         }
-
     }
 }

@@ -186,8 +186,8 @@ namespace pactometro
                     MessageBox.Show("Elección añadida con éxito.");
                     break;
                 case 1:
-                    eleccion.Results = eleccionSeleccionada.Results;
-                    eleccionSeleccionada = eleccion;
+                    elecciones.Remove(eleccionSeleccionada);
+                    elecciones.Add(eleccion);
                     MessageBox.Show("Elección modificada con éxito.");
                     this.Close();
                     break;

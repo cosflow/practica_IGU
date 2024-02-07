@@ -13,7 +13,6 @@ namespace pactometro
         {
             iniciarElecciones(elecciones);
         }
-
         public void iniciarElecciones(ObservableCollection<Eleccion> e)
         {
             ObservableCollection<Resultado> resultado1 = new ObservableCollection<Resultado>();

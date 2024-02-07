@@ -25,8 +25,6 @@ namespace pactometro
             resultadoSeleccionado = r;
         }
     }
-
-    
     public partial class CDPactómetro : Window
     {
         Resultado rSeleccionado = null;
@@ -110,6 +108,17 @@ namespace pactometro
             {
                 resultadosAñadidos.Remove(rSeleccionado);
                 resultados.Add(rSeleccionado);
+                int restantes = mayoría;
+                foreach (Resultado r in resultadosAñadidos)
+                {
+                    restantes -= r.escaños;
+                    if (restantes <= 0)
+                    {
+                        restantes = 0;
+                        MessageBox.Show("MAYORÍA ALCANZADA!");
+                    }
+                }
+                txt_ResultadosRestantes.Text = "Escaños restantes para alcanzar la mayoría:\n\t" + restantes;
                 tablaResultados.ItemsSource = resultados;
                 tablaResultadosAñadidos.ItemsSource = resultadosAñadidos;
             }
