@@ -102,7 +102,9 @@ namespace pactometro
         }
         private void D_eleccion_Click(object sender, RoutedEventArgs e)
         {
+            
             Eleccion eleccionSelect = (Eleccion)tablaElecciones.SelectedItem;
+            tablaElecciones.SelectedItems.Clear();
             if (eleccionSelect == null)
             {
                 return;
