@@ -38,7 +38,6 @@ namespace pactometro
 
             DatosElecciones datos = new DatosElecciones(elecciones);
             elecciones.CollectionChanged += CollectionChangedHandler;
-            
         }
         private void visualizarResultados(Eleccion e)
         {
@@ -737,15 +736,6 @@ namespace pactometro
                     break;
             }
         }
-        private void Eleccion_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)  
-        {
-            Eleccion eleccion = (Eleccion)sender;
-            
-            if (eleccion == eleccionSeleccionada && eleccionSeleccionada != null)
-            {
-                visualizarResultados(eleccion);
-            }
-        }
         void cdTablas_Closed(object sender, EventArgs e)
         {
             cdTablas = null; 
@@ -772,6 +762,12 @@ namespace pactometro
         void cdPactómetro_Closed(object sender, EventArgs e)
         {
             cdPactometro = null;
+        }
+        protected override void OnClosed(EventArgs e)
+        {
+            base.OnClosed(e);
+            if(cdPactometro != null) { cdPactometro.Close();  cdPactometro = null; }
+            if (cdTablas != null) { cdTablas.Close(); cdTablas = null; }
         }
     }
 }

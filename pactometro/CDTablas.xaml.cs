@@ -80,7 +80,6 @@ namespace pactometro
         {
             CRUD = null;
         }
-
         private void C_eleccion_Click(object sender, RoutedEventArgs e)
         {
             if (CRUD == null)
@@ -90,7 +89,6 @@ namespace pactometro
             }
             CRUD.Show();
         }
-
         private void U_eleccion_Click(object sender, RoutedEventArgs e)
         {
             if (CRUD == null)
@@ -101,7 +99,6 @@ namespace pactometro
             }
             CRUD.Show();
         }
-
         private void D_eleccion_Click(object sender, RoutedEventArgs e)
         {
             Eleccion eleccionSelect = (Eleccion)tablaElecciones.SelectedItem;
@@ -119,6 +116,11 @@ namespace pactometro
                 else i++;
             }
             listaElecciones.RemoveAt(i);
+        }
+        protected override void OnClosed(EventArgs e)
+        {
+            base.OnClosed(e);
+            if (CRUD != null) { CRUD.Close(); CRUD = null; }
         }
     }
 }
