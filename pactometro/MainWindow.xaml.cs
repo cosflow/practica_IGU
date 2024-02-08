@@ -658,8 +658,8 @@ namespace pactometro
             if (eleccionSeleccionada != null)
             {
                 lienzo.Children.Clear();
-                visualizarResultados(eleccionSeleccionada);
                 modo = 0;
+                visualizarResultados(eleccionSeleccionada);
                 btn_GestionarPactos.IsEnabled = false;
             }
             else MessageBox.Show("ERROR\nSeleccione una elección en la ventana de  Opciones->Registro, por favor");
