@@ -721,60 +721,20 @@ namespace pactometro
         private void CollectionChangedHandler(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (eleccionSeleccionada == null) return;
-            if (e.Action == NotifyCollectionChangedAction.Add)
+            lienzo.Children.Clear();
+            switch (modo)
             {
-                switch (modo)
-                {
-                    case 2:
-                        visualizarResultadosPactómetro(eleccionSeleccionada);
-                        break;
-                    default:
-                        break;
-                }
-            }
-            else if (e.Action == NotifyCollectionChangedAction.Remove)
-            {
-                if(eleccionSeleccionada == null) lienzo.Children.Clear();
-                else
-                {
-                    switch(modo)
-                    {
-                        case 0:
-                            visualizarResultados(eleccionSeleccionada);
-                            break;
-                        case 1:
-                            obtenerHistorico(eleccionSeleccionada);
-                            break;
-                        case 2:
-                            visualizarResultadosPactómetro(eleccionSeleccionada);
-                            break;
-                        default:
-                            break;
-                    }
-                }
-            }
-            else if (e.Action == NotifyCollectionChangedAction.Replace)
-            {
-                if (eleccionSeleccionada == null) return;
-                lienzo.Children.Clear();
-                switch (modo)
-                {
-                    case 0:
-                        visualizarResultados(eleccionSeleccionada);
-                        break;
-                    case 1:
-                        obtenerHistorico(eleccionSeleccionada);
-                        break;
-                    case 2:
-                        visualizarResultadosPactómetro(eleccionSeleccionada);
-                        break;
-                    default:
-                        break;
-                }
-            }
-            else if (e.Action == NotifyCollectionChangedAction.Reset)
-            {
-                lienzo.Children.Clear();
+                case 0:
+                    visualizarResultados(eleccionSeleccionada); 
+                    break;
+                case 1:
+                    obtenerHistorico(eleccionSeleccionada); 
+                    break;
+                case 2:
+                    visualizarResultadosPactómetro(eleccionSeleccionada);
+                    break;
+                default:
+                    break;
             }
         }
         private void Eleccion_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)  

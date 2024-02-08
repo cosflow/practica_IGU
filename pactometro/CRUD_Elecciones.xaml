@@ -39,7 +39,7 @@
                             <TextBox x:Name="txtBox_Escaños" Margin="2" Grid.Row="2" Grid.Column="1" Width="100"/>
                         </StackPanel>
                     </Border>
-                    <Button Margin="5" x:Name="btn_AñadePartido" Content="Añadir" HorizontalAlignment="Center" VerticalAlignment="Stretch" Padding="4" Grid.Row="3" Click="btn_AñadePartido_Click"/>
+                    <Button Margin="5" x:Name="btn_AñadePartido" Content="Guardar resultado" HorizontalAlignment="Center" VerticalAlignment="Stretch" Padding="4" Grid.Row="3" Click="btn_AñadePartido_Click"/>
                 </StackPanel>
             </Border>
         
@@ -64,7 +64,7 @@
                 </StackPanel>
             </Border>
             <StackPanel Orientation="Horizontal" Grid.Row="7" Margin="10" HorizontalAlignment="Center">
-                <Button x:Name="btn_Guardar" Content="Guardar"  HorizontalAlignment="Center" Margin="10" Padding="2" Click="btn_Guardar_Click"/>
+                <Button x:Name="btn_Guardar" Content="Guardar y salir"  HorizontalAlignment="Center" Margin="10" Padding="2" Click="btn_Guardar_Click" IsDefault="True"/>
             </StackPanel>
         </Grid>
     </ScrollViewer>
