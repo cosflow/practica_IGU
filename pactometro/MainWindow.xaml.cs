@@ -407,7 +407,11 @@ namespace pactometro
         private void visualizarResultadosPactómetro(Eleccion e)
         {
             lienzo.Children.Clear();
-            
+            if (eleccionSeleccionada == null)
+            {
+                MessageBox.Show("ERROR\nSeleccione una elección en la ventana de  Opciones->Registro, por favor");
+                return;
+            }
             if (e == null) return;
 
             switch (e.Tipo)
@@ -692,6 +696,11 @@ namespace pactometro
         }
         private void iniciarPactómetro()
         {
+            if (eleccionSeleccionada == null)
+            {
+                MessageBox.Show("ERROR\nSeleccione una elección en la ventana de  Opciones->Registro, por favor");
+                return;
+            }
             lienzo.Children.Clear();
             copiaResultados = new ObservableCollection<Resultado>(eleccionSeleccionada.Results);
             resultadosAñadidos = new ObservableCollection<Resultado>();

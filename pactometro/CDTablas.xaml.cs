@@ -50,6 +50,7 @@ namespace pactometro
             tablaResultados.Items.Clear();
             tablaElecciones.ItemsSource = listaElecciones;
             tablaResultados.ItemsSource = listaResultados;
+            
         }
 
         void OnCambioSeleccion(CambioSeleccionEleccionEventArgs e)
@@ -111,11 +112,11 @@ namespace pactometro
             {
                 if (el.Equals(eleccionSelect))
                 {
+                    listaElecciones.Remove(el);
                     break;
                 }
-                else i++;
             }
-            listaElecciones.RemoveAt(i);
+            
         }
         protected override void OnClosed(EventArgs e)
         {
