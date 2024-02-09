@@ -48,26 +48,31 @@ namespace pactometro
         public int TotalEscaños
         {
             get { return totalEscaños; }
+            set { totalEscaños = value; OnPropertyChanged("TotalEscaños"); }
         }
 
         public int Mayoría
         {
             get { return mayoría; }
+            set { mayoría = value; OnPropertyChanged("Mayoría"); }
         }
 
         public string Título
         {
             get { return titulo; }
+            set { titulo = value; OnPropertyChanged("Título"); }
         }
 
         public string Partidos
         {
             get { return partidos; }
+            set { partidos = value; OnPropertyChanged("Partidos"); }
         }
 
         public string Escaños
         {
             get { return escaños; }
+            set { escaños = value; OnPropertyChanged("Escaños"); }
         }
 
         public Eleccion(ObservableCollection<Resultado> results, string parlamento, string tipo, string fecha)
