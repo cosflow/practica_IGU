@@ -46,7 +46,6 @@
         <StackPanel Orientation="Horizontal" Grid.Row="2">
             <Button Padding="2" Margin="10" x:Name="btn_C_eleccion" Content="Añadir elección" VerticalAlignment="Center" Click="C_eleccion_Click"/>
             <Button Padding="2" Margin="10" x:Name="btn_U_eleccion" Content="Modificar elección" Width="Auto" Click="U_eleccion_Click" IsEnabled="False"/>
-            <Button Padding="2" Margin="10" x:Name="btn_D_eleccion" Content="Eliminar elección" Width="Auto" Click="D_eleccion_Click" IsEnabled="False"/>
         </StackPanel>
     </Grid>
 </Window>

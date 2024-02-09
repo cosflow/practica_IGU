@@ -67,14 +67,19 @@ namespace pactometro
                 OnCambioSeleccion(misargs);
                 listaResultados = eleccionSelect.Results;
                 tablaResultados.ItemsSource = listaResultados;
-                btn_D_eleccion.IsEnabled = true;
                 btn_U_eleccion.IsEnabled = true;
+                if(CRUD != null)
+                {
+                    CRUD.Close();
+                    CRUD = new CRUD_Elecciones(listaElecciones,eleccionSelect);
+                    CRUD.Closed += CRUD_Closed;
+                    CRUD.Show();
+                }
             }
 
             else
             {
                 btn_U_eleccion.IsEnabled = false;
-                btn_D_eleccion.IsEnabled = false;
             }
         }
         private void CRUD_Closed(object sender, EventArgs e)
@@ -87,8 +92,8 @@ namespace pactometro
             {
                 CRUD = new CRUD_Elecciones(listaElecciones, null);
                 CRUD.Closed += CRUD_Closed;
+                CRUD.Show();
             }
-            CRUD.Show();
         }
         private void U_eleccion_Click(object sender, RoutedEventArgs e)
         {
@@ -99,26 +104,6 @@ namespace pactometro
                 CRUD.Closed += CRUD_Closed;
             }
             CRUD.Show();
-        }
-        private void D_eleccion_Click(object sender, RoutedEventArgs e)
-        {
-            
-            Eleccion eleccionSelect = (Eleccion)tablaElecciones.SelectedItem;
-            tablaElecciones.SelectedItems.Clear();
-            if (eleccionSelect == null)
-            {
-                return;
-            }
-            int i = 0;
-            foreach(Eleccion el in listaElecciones)
-            {
-                if (el.Equals(eleccionSelect))
-                {
-                    listaElecciones.Remove(el);
-                    break;
-                }
-            }
-            
         }
         protected override void OnClosed(EventArgs e)
         {
