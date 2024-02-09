@@ -56,13 +56,10 @@ namespace pactometro
                 switch (modo)
                 {
                     case 0:
-                        tituloEleccion.Text += "\nVista: Normal";
+                        tituloEleccion.Text = tituloEleccion.Text+"\nVista: Normal";
                         break;
                     case 1:
-                        tituloEleccion.Text += "\nVista: Histórico";
-                        break;
-                    case 2:
-                        tituloEleccion.Text += "\nVista: Pactómetro";
+                        tituloEleccion.Text = tituloEleccion.Text+"\nVista: Histórico";
                         break;
                 }
                 tituloEleccion.FontSize = 20;
@@ -404,6 +401,21 @@ namespace pactometro
                 lienzo.Children.Add(fecha);
             }
         }
+        private void iniciarPactómetro()
+        {
+            if (eleccionSeleccionada == null)
+            {
+                MessageBox.Show("ERROR\nSeleccione una elección en la ventana de  Opciones->Registro, por favor");
+                return;
+            }
+            tituloEleccion.Text = tituloEleccion.Text = eleccionSeleccionada.Tipo + " " + eleccionSeleccionada.Parlamento + " " + eleccionSeleccionada.Fecha;
+            tituloEleccion.Text = tituloEleccion.Text + "\nVista: Pactómetro";
+            lienzo.Children.Clear();
+            copiaResultados = new ObservableCollection<Resultado>(eleccionSeleccionada.Results);
+            resultadosAñadidos = new ObservableCollection<Resultado>();
+            copiaResultados.CollectionChanged += CollectionChangedHandler;
+            resultadosAñadidos.CollectionChanged += CollectionChangedHandler;
+        }
         private void visualizarResultadosPactómetro(Eleccion e)
         {
             lienzo.Children.Clear();
@@ -694,26 +706,13 @@ namespace pactometro
             iniciarPactómetro();
             visualizarResultadosPactómetro(eleccionSeleccionada);
         }
-        private void iniciarPactómetro()
-        {
-            if (eleccionSeleccionada == null)
-            {
-                MessageBox.Show("ERROR\nSeleccione una elección en la ventana de  Opciones->Registro, por favor");
-                return;
-            }
-            lienzo.Children.Clear();
-            copiaResultados = new ObservableCollection<Resultado>(eleccionSeleccionada.Results);
-            resultadosAñadidos = new ObservableCollection<Resultado>();
-            copiaResultados.CollectionChanged += CollectionChangedHandler;
-            resultadosAñadidos.CollectionChanged += CollectionChangedHandler;
-        }
         private void Conf_MenuItem_Click(object sender, RoutedEventArgs e)
         {
             if (cdTablas == null)
             {
                 cdTablas = new CDTablas(elecciones);
                 cdTablas.Closed += cdTablas_Closed;
-                cdTablas.CambioSeleccion += Cdsec_CambioSeleccion;
+                cdTablas.CambioSeleccion += cdTablas_CambioSeleccion;
             }
             cdTablas.Show();
         }
@@ -749,7 +748,7 @@ namespace pactometro
         {
             cdTablas = null; 
         }
-        private void Cdsec_CambioSeleccion(object sender, CambioSeleccionEleccionEventArgs e)
+        private void cdTablas_CambioSeleccion(object sender, CambioSeleccionEleccionEventArgs e)
         {
             lienzo.Children.Clear();
             eleccionSeleccionada = e.eleccionSeleccionada;

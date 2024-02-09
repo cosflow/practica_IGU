@@ -173,11 +173,15 @@ namespace pactometro
             }
 
             string tipo;
-
+            string parlamento =txtBox_Parlamento.Text;
             if (txtBox_Tipo.Text == "A") tipo = "Autonómicas";
-            else tipo = "Generales";
+            else
+            {
+                tipo = "Generales";
+                parlamento = "CORTES GENERALES";
+            }
 
-            Eleccion eleccion = new Eleccion(resultados, txtBox_Parlamento.Text, tipo, fecha);
+            Eleccion eleccion = new Eleccion(resultados, parlamento, tipo, fecha);
 
             switch (modo)
             {
